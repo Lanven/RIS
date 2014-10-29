@@ -42,3 +42,7 @@ CREATE INDEX index_orders_main_goods_id ON sb.orders_main (goods_id);
 CREATE INDEX index_orders_main_client_id ON sb.orders_main (client_id);
 CREATE INDEX index_orders_main_payment_method_id ON sb.orders_main (payment_method_id);
 CREATE INDEX index_orders_main_month ON sb.orders_main(month);
+
+ALTER TABLE sb.clients ADD CONSTRAINT clients_unique UNIQUE (passport_series,passport_number);
+ALTER TABLE sb.categories ADD CONSTRAINT categories_unique UNIQUE (title);
+ALTER TABLE sb.countries ADD CONSTRAINT countries_unique UNIQUE (name);

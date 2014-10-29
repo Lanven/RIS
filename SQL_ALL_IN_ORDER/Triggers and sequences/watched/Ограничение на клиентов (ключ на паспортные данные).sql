@@ -1,0 +1,1 @@
+﻿ALTER TABLE sb.clients ADD CONSTRAINT unique_clients UNIQUE (passport_series, passport_number);

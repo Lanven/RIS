@@ -1,10 +1,8 @@
 ﻿ALTER TABLE sa.categories ADD PRIMARY KEY (id);
 ALTER TABLE sa.countries ADD PRIMARY KEY (id);
-ALTER TABLE sa.countries_sum ADD PRIMARY KEY (id);
 ALTER TABLE sa.payment_methods ADD PRIMARY KEY (id);
 ALTER TABLE sa.sale_types ADD PRIMARY KEY (id);
-ALTER TABLE sa.companies_main ADD PRIMARY KEY (id);
-ALTER TABLE sa.companies_info ADD PRIMARY KEY (id);
+ALTER TABLE sa.companies ADD PRIMARY KEY (id);
 ALTER TABLE sa.goods_main ADD PRIMARY KEY (id);
 ALTER TABLE sa.goods_info ADD PRIMARY KEY (id);
 ALTER TABLE sa.clients ADD PRIMARY KEY (id);
@@ -12,18 +10,13 @@ ALTER TABLE sa.orders_main ADD PRIMARY KEY (id);
 ALTER TABLE sa.orders_info ADD PRIMARY KEY (id);
 
 
-
-ALTER TABLE sa.companies_main ADD CONSTRAINT companies_main_country_id
-	FOREIGN KEY (country_id) REFERENCES sa.countries (id);
-ALTER TABLE sa.companies_info ADD CONSTRAINT companies_info_id
-	FOREIGN KEY (id) REFERENCES sa.companies_main (id);
 ALTER TABLE sa.companies_monthly ADD CONSTRAINT companies_monthly_id
-	FOREIGN KEY (id) REFERENCES sa.companies_main (id); 
+	FOREIGN KEY (id) REFERENCES sa.companies (id); 
 
 ALTER TABLE sa.goods_main ADD CONSTRAINT goods_main_category_id
 	FOREIGN KEY (category_id) REFERENCES sa.categories (id);
 ALTER TABLE sa.goods_main ADD CONSTRAINT goods_main_company_id
-	FOREIGN KEY (company_id) REFERENCES sa.companies_main (id);
+	FOREIGN KEY (company_id) REFERENCES sa.companies (id);
 
 ALTER TABLE sa.orders_main ADD CONSTRAINT orders_main_goods_id
 	FOREIGN KEY (goods_id) REFERENCES sa.goods_main (id);
@@ -39,14 +32,9 @@ ALTER TABLE sa.goods_info ADD CONSTRAINT goods_info_id
 
 ALTER TABLE sa.orders_info ADD CONSTRAINT orders_info_id
 	FOREIGN KEY (id) REFERENCES sa.orders_main (id);
-	
-ALTER TABLE sa.countries_sum ADD CONSTRAINT countries_sum_id
-	FOREIGN KEY (id) REFERENCES sa.countries(id);
-	
 
 	
-	
-CREATE INDEX index_companies_main_country_id ON sa.companies_main (country_id);
+CREATE INDEX index_companies_country_id ON sa.companies (country_id);
 
 CREATE INDEX index_companies_monthly_month ON sa.companies_monthly (month);
 
@@ -59,3 +47,7 @@ CREATE INDEX index_orders_main_payment_method_id ON sa.orders_main (payment_meth
 CREATE INDEX index_orders_main_sale_type_id ON sa.orders_main (sale_type_id);
 CREATE INDEX index_orders_main_sale_cond ON sa.orders_main(sale_amount) WHERE sale_amount <= 1000;
 CREATE INDEX index_orders_main_month ON sa.orders_main(month);
+
+CREATE INDEX index_clients ON sa.clients (birthdate DESC, surname, name, patronymic);
+ALTER TABLE sa.categories ADD CONSTRAINT categories_unique UNIQUE (title);
+ALTER TABLE sa.countries ADD CONSTRAINT countries_unique UNIQUE (name);
