@@ -1,0 +1,15 @@
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\bin\Debug\RIS.exe.config
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\bin\Debug\RIS.exe
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\bin\Debug\RIS.pdb
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.csprojResolveAssemblyReference.cache
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Login.resources
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Main.resources
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Properties.Resources.resources
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.csproj.GenerateResource.Cache
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.exe
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.pdb
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_About.resources
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Query_2.resources
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Query_3.resources
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Query_5.resources
+c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Query_4.resources
