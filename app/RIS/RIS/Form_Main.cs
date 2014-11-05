@@ -36,7 +36,7 @@ namespace RIS
             Form_Login Login_Form = new Form_Login(this);
             Login_Form.ShowDialog();
             SetMenuStates(serv);
-            toolStripStatusLabel_Main.Text = "Подключено к " + conn.Host + ". ДБ: " + conn.Database;
+            //toolStripStatusLabel_Main.Text = "Подключено к " + conn.Host + ". ДБ: " + conn.Database;
         }
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
@@ -71,6 +71,30 @@ namespace RIS
         private void запрос4ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form_Query_4 QueryForm = new Form_Query_4(conn);
+            QueryForm.Show();
+        }
+
+        private void запрос6ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Query_6 QueryForm = new Form_Query_6(conn);
+            QueryForm.Show();
+        }
+
+        private void запрос7ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Query_7 QueryForm = new Form_Query_7(conn);
+            QueryForm.Show();
+        }
+
+        private void wordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Query_Word QueryForm = new Form_Query_Word(conn);
+            QueryForm.Show();
+        }
+
+        private void excelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Query_Excel QueryForm = new Form_Query_Excel(conn);
             QueryForm.Show();
         }
 
