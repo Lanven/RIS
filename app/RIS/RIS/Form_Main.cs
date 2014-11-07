@@ -8,11 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Npgsql;
+using System.Runtime.InteropServices;
 
 namespace RIS
 {
     public partial class Form_Main : Form
     {
+        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double Add(double a, double b);
+        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double Subtract(double a, double b);
+        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double Multiply(double a, double b);
+
         public NpgsqlConnection conn;
         public int serv;//можно получить из конекшена вообщет
 
@@ -36,6 +44,8 @@ namespace RIS
             Form_Login Login_Form = new Form_Login(this);
             Login_Form.ShowDialog();
             SetMenuStates(serv);
+
+            label1.Text = Convert.ToString(Add(23, 15));
             //toolStripStatusLabel_Main.Text = "Подключено к " + conn.Host + ". ДБ: " + conn.Database;
         }
 
@@ -95,6 +105,24 @@ namespace RIS
         private void excelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form_Query_Excel QueryForm = new Form_Query_Excel(conn);
+            QueryForm.Show();
+        }
+
+        private void категорииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Categories QueryForm = new Form_Categories(conn);
+            QueryForm.Show();
+        }
+
+        private void категориюToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Add_Category QueryForm = new Form_Add_Category(conn);
+            QueryForm.Show();
+        }
+
+        private void продажуToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Add_Order QueryForm = new Form_Add_Order(conn);
             QueryForm.Show();
         }
 

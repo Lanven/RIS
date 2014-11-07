@@ -14,8 +14,6 @@ c:\users\администратор\documents\visual studio 2013\Projects\RIS\RI
 c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Query_5.resources
 c:\users\администратор\documents\visual studio 2013\Projects\RIS\RIS\obj\Debug\RIS.Form_Query_4.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\bin\Debug\RIS.exe.config
-C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.exe
-C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.pdb
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\bin\Debug\RIS.exe
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\bin\Debug\RIS.pdb
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.csprojResolveAssemblyReference.cache
@@ -28,7 +26,14 @@ C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Fo
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Query_5.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Query_6.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Query_7.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Query_Excel.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Query_Word.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Properties.Resources.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.csproj.GenerateResource.Cache
-C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Query_Word.resources
-C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Query_Excel.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.exe
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.pdb
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Categories.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Add_Category.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Add_Order.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Search_Client.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Search_Goods.resources

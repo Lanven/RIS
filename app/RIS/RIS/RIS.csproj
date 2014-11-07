@@ -64,6 +64,24 @@
     <Compile Include="Form_About.Designer.cs">
       <DependentUpon>Form_About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form_Add_Category.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_Add_Category.Designer.cs">
+      <DependentUpon>Form_Add_Category.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form_Add_Order.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_Add_Order.Designer.cs">
+      <DependentUpon>Form_Add_Order.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form_Categories.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_Categories.Designer.cs">
+      <DependentUpon>Form_Categories.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,10 +142,31 @@
     <Compile Include="Form_Query_Word.Designer.cs">
       <DependentUpon>Form_Query_Word.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form_Search_Client.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_Search_Client.Designer.cs">
+      <DependentUpon>Form_Search_Client.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form_Search_Goods.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_Search_Goods.Designer.cs">
+      <DependentUpon>Form_Search_Goods.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form_About.resx">
       <DependentUpon>Form_About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_Add_Category.resx">
+      <DependentUpon>Form_Add_Category.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_Add_Order.resx">
+      <DependentUpon>Form_Add_Order.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_Categories.resx">
+      <DependentUpon>Form_Categories.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form_Login.resx">
       <DependentUpon>Form_Login.cs</DependentUpon>
@@ -158,6 +197,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form_Query_Word.resx">
       <DependentUpon>Form_Query_Word.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_Search_Client.resx">
+      <DependentUpon>Form_Search_Client.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_Search_Goods.resx">
+      <DependentUpon>Form_Search_Goods.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
