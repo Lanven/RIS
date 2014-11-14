@@ -22,6 +22,7 @@ namespace RIS
         public Form_Login()
         {
             InitializeComponent();
+            comboBox_Server.SelectedIndex = 1;
         }
 
         private void button_LogIn_Click(object sender, EventArgs e)

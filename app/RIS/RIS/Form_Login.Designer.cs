@@ -39,6 +39,7 @@
             // 
             // comboBox_Server
             // 
+            this.comboBox_Server.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Server.FormattingEnabled = true;
             this.comboBox_Server.Items.AddRange(new object[] {
             "Сервер А (students)",

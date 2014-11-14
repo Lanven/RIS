@@ -47,13 +47,17 @@ namespace RIS
             var res = Login_Form.ShowDialog();
             if (res == DialogResult.OK)
             {
-                    string server = Login_Form.server;
-                    int servId = Login_Form.servId;
-                    string login = Login_Form.login;
-                    connStr = Login_Form.connStr;
-                    toolStripStatusLabel_Main.Text = "Подключено к " + server + ". Login: " + login;
-                    SetMenuStates(servId);
-                    show = true;
+                string server = Login_Form.server;
+                int servId = Login_Form.servId;
+                string login = Login_Form.login;
+                connStr = Login_Form.connStr;
+                toolStripStatusLabel_Main.Text = "Подключено к " + server + ". Login: " + login;
+                SetMenuStates(servId);
+                show = true;
+            }
+            else
+            {
+                show = false;
             }
             this.Show();
         }
@@ -161,6 +165,12 @@ namespace RIS
         private void компанииToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form_Companies QueryForm = new Form_Companies(connStr);
+            QueryForm.Show();
+        }
+
+        private void товарыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Goods QueryForm = new Form_Goods(connStr);
             QueryForm.Show();
         }
 

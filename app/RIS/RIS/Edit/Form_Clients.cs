@@ -104,9 +104,238 @@ namespace RIS
                 }
             }
         }
-    
-        
-    
+
+
+        private bool IsEveryFieldCorrect()
+        {
+            string surname = textBox_Surname.Text;
+            string name = textBox_Name.Text;
+            string patronymic = textBox_Patronymic.Text;
+
+            //string phone = textBox_Phone.Text;
+            //string email = textBox_Email.Text;
+            //string address = textBox_Address.Text;
+
+            string passport_series = textBox_Passport_series.Text;
+            string passport_number = textBox_Passport_number.Text;
+
+            string issue_date_str = textBox_Issue_date.Text;
+            //string issue_department = textBox_Issue_department.Text;
+
+            string birthdate_str = textBox_Birthdate.Text;
+
+            if (surname == "")
+            {
+                MessageBox.Show("Введите фамилию");
+                return false;
+            }
+            if (name == "")
+            {
+                MessageBox.Show("Введите имя");
+                return false;
+            }
+            if (patronymic == "")
+            {
+                MessageBox.Show("Введите отчество");
+                return false;
+            }
+            if (birthdate_str == "")
+            {
+                MessageBox.Show("Введите дату рождения");
+                return false;
+            }
+            DateTime birthdate;
+            if (!DateTime.TryParse(birthdate_str, out birthdate))
+            {
+                MessageBox.Show("Неверная дата рождения");
+                return false;
+            }
+            if (passport_series == "")
+            {
+                MessageBox.Show("Введите серию паспорта");
+                return false;
+            }
+            if (passport_number == "")
+            {
+                MessageBox.Show("Введите номер паспорта");
+                return false;
+            }
+            DateTime issue_date;
+            if (issue_date_str != "")
+                if (!DateTime.TryParse(issue_date_str, out issue_date))
+                {
+                    MessageBox.Show("Неверная дата выдачи");
+                    return false;
+                }
+            
+            return true;
+        }
+
+        private void button_Create_Click(object sender, EventArgs e)
+        {
+            if (!IsEveryFieldCorrect())
+            {
+                return;
+            }
+
+            string surname = textBox_Surname.Text;
+            string name = textBox_Name.Text;
+            string patronymic = textBox_Patronymic.Text;
+
+            string phone = textBox_Phone.Text;
+            string email = textBox_Email.Text;
+            string address = textBox_Address.Text;
+
+            string passport_series = textBox_Passport_series.Text;
+            string passport_number = textBox_Passport_number.Text;
+
+            string issue_date_str = textBox_Issue_date.Text;
+            DateTime issue_date = DateTime.Parse(issue_date_str);
+            string issue_department = textBox_Issue_department.Text;
+
+            string birthdate_str = textBox_Birthdate.Text;
+            DateTime birthdate = DateTime.Parse(birthdate_str);
+            
+            string tmp = "select count(*) from sb.clients a where a.passport_series LIKE :passport_series AND a.passport_number LIKE :passport_number";
+            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
+            tmpcmd.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
+            tmpcmd.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
+
+            if ((long)tmpcmd.ExecuteScalar() == 0)
+            {
+                try
+                {
+                    var cmdData = new Npgsql.NpgsqlCommand("func_clients_on_insert", conn);
+                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmdData.Parameters.Add("surname", NpgsqlTypes.NpgsqlDbType.Text).Value = surname;
+                    cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
+                    cmdData.Parameters.Add("patronymic", NpgsqlTypes.NpgsqlDbType.Text).Value = patronymic;
+                    cmdData.Parameters.Add("birthdate", NpgsqlTypes.NpgsqlDbType.Date).Value = birthdate;
+                    cmdData.Parameters.Add("phone", NpgsqlTypes.NpgsqlDbType.Text).Value = phone;
+                    cmdData.Parameters.Add("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
+                    cmdData.Parameters.Add("address", NpgsqlTypes.NpgsqlDbType.Text).Value = address;
+                    cmdData.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
+                    cmdData.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
+                    cmdData.Parameters.Add("issue_date", NpgsqlTypes.NpgsqlDbType.Date).Value = issue_date;
+                    cmdData.Parameters.Add("issue_department", NpgsqlTypes.NpgsqlDbType.Text).Value = issue_department;
+                    
+                    cmdData.ExecuteNonQuery();
+                    MessageBox.Show("Клиент создан");
+                    RefreshData();
+                }
+                catch
+                {
+                    MessageBox.Show("Smth wrong on client insert");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Клиент с такими паспортными данными уже существует");
+            }
+        }
+
+        private void button_Change_Click(object sender, EventArgs e)
+        {
+            if (label_id.Text == "")
+            {
+                MessageBox.Show("Выберите клиента");
+                return;
+            }
+            if (!IsEveryFieldCorrect())
+            {
+                return;
+            }
+
+            string surname = textBox_Surname.Text;
+            string name = textBox_Name.Text;
+            string patronymic = textBox_Patronymic.Text;
+
+            string phone = textBox_Phone.Text;
+            string email = textBox_Email.Text;
+            string address = textBox_Address.Text;
+
+            string passport_series = textBox_Passport_series.Text;
+            string passport_number = textBox_Passport_number.Text;
+
+            string issue_date_str = textBox_Issue_date.Text;
+            DateTime issue_date = DateTime.Parse(issue_date_str);
+            string issue_department = textBox_Issue_department.Text;
+
+            string birthdate_str = textBox_Birthdate.Text;
+            DateTime birthdate = DateTime.Parse(birthdate_str);
+
+            int client_id = Convert.ToInt32(label_id.Text);
+
+            string tmp = "select count(*) from sb.clients a where a.passport_series LIKE :passport_series AND a.passport_number LIKE :passport_number AND a.id <> :id";
+            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
+            tmpcmd.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
+            tmpcmd.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
+            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
+
+            if ((long)tmpcmd.ExecuteScalar() == 0)
+            {
+                try
+                {
+                    var cmdData = new Npgsql.NpgsqlCommand("func_clients_on_update", conn);
+                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
+                    cmdData.Parameters.Add("surname", NpgsqlTypes.NpgsqlDbType.Text).Value = surname;
+                    cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
+                    cmdData.Parameters.Add("patronymic", NpgsqlTypes.NpgsqlDbType.Text).Value = patronymic;
+                    cmdData.Parameters.Add("birthdate", NpgsqlTypes.NpgsqlDbType.Date).Value = birthdate;
+                    cmdData.Parameters.Add("phone", NpgsqlTypes.NpgsqlDbType.Text).Value = phone;
+                    cmdData.Parameters.Add("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
+                    cmdData.Parameters.Add("address", NpgsqlTypes.NpgsqlDbType.Text).Value = address;
+                    cmdData.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
+                    cmdData.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
+                    cmdData.Parameters.Add("issue_date", NpgsqlTypes.NpgsqlDbType.Date).Value = issue_date;
+                    cmdData.Parameters.Add("issue_department", NpgsqlTypes.NpgsqlDbType.Text).Value = issue_department;
+                    cmdData.ExecuteNonQuery();
+                    MessageBox.Show("Клиент изменен");
+                    RefreshData();
+                }
+                catch
+                {
+                    MessageBox.Show("Smth wrong on client update");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Клиент с такими данными уже существует");
+            }
+        }
+
+        private void button_Delete_Click(object sender, EventArgs e)
+        {
+            if (label_id.Text == "")
+            {
+                MessageBox.Show("Выберите клиента");
+                return;
+            }
+            if (MessageBox.Show("Действительно удалить клиента (удалятся все связанные данные!)?",
+                                    "Danger!",
+                                    MessageBoxButtons.YesNo)
+                                    == System.Windows.Forms.DialogResult.No)
+            {
+                return;
+            }
+
+            int client_id = Convert.ToInt32(label_id.Text);
+
+            try
+            {
+                var cmdData = new Npgsql.NpgsqlCommand("func_clients_on_delete", conn);
+                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
+                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
+                cmdData.ExecuteNonQuery();
+                MessageBox.Show("Клиент удален");
+                RefreshData();
+            }
+            catch
+            {
+                MessageBox.Show("Smth wrong on client delete");
+            }
+        }
     
     
     }

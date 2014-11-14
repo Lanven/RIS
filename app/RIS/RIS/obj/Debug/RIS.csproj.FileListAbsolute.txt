@@ -39,3 +39,5 @@ C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Fo
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Countries.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Clients.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Companies.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Goods.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Orders.resources

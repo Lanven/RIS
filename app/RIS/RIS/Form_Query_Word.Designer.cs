@@ -60,6 +60,9 @@
             // 
             // comboBox_Firms
             // 
+            this.comboBox_Firms.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.comboBox_Firms.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.comboBox_Firms.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Firms.FormattingEnabled = true;
             this.comboBox_Firms.Location = new System.Drawing.Point(65, 57);
             this.comboBox_Firms.Name = "comboBox_Firms";

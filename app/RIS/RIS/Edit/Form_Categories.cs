@@ -77,21 +77,25 @@ namespace RIS
             }
         }
 
-        private bool IsEmpty(string str)
+        private bool IsEveryFieldCorrect()
         {
-            if (str.Length == 0)
-                return true;
-            return false;
+            string title = textBox_Title.Text;
+            if (title == "")
+            {
+                MessageBox.Show("Введите название");
+                return false;
+            }
+            return true;
         }
 
         private void button_Create_Click(object sender, EventArgs e)
         {
-            string title = textBox_Title.Text;
-            if (IsEmpty(title))
+            if (!IsEveryFieldCorrect())
             {
-                MessageBox.Show("Введите название");
                 return;
             }
+
+            string title = textBox_Title.Text;
 
             string tmp = "select count(*) from sb.categories a where a.title LIKE :title";
             NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
@@ -121,17 +125,17 @@ namespace RIS
 
         private void button_Change_Click(object sender, EventArgs e)
         {
-            if (IsEmpty(label_id.Text))
+            if (label_id.Text == "")
             {
                 MessageBox.Show("Выберите категорию");
                 return;
             }
-            string title = textBox_Title.Text;
-            if (IsEmpty(title))
+            if (!IsEveryFieldCorrect())
             {
-                MessageBox.Show("Введите новое название");
                 return;
             }
+            string title = textBox_Title.Text;
+
             int category_id = Convert.ToInt32(label_id.Text);
 
             string tmp = "select count(*) from sb.categories a where a.title LIKE :title AND a.id <> :id";
@@ -164,7 +168,7 @@ namespace RIS
 
         private void button_Delete_Click(object sender, EventArgs e)
         {
-            if (IsEmpty(label_id.Text))
+            if (label_id.Text == "")
             {
                 MessageBox.Show("Выберите категорию");
                 return;

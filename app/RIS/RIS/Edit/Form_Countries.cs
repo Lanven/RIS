@@ -56,7 +56,6 @@ namespace RIS
                             "    SELECT sb.countries.id, sb.countries.name " +
                             "    FROM sb.countries) a " +
                             "ORDER BY 2; ";
-            
 
             //string query = "SELECT id, name from sb.countries";
 
@@ -66,26 +65,30 @@ namespace RIS
             dataGridView_Countries.DataSource = table;
         }
 
-        private bool IsEmpty(string str)
+        private bool IsEveryFieldCorrect()
         {
-            if (str.Length == 0)
-                return true;
-            return false;
+            string name = textBox_Name.Text;
+            if (name =="")
+            {
+                MessageBox.Show("Введите название");
+                return false;
+            }
+            return true;
         }
 
         private void button_Create_Click(object sender, EventArgs e)
         {
-            string name = textBox_Name.Text;
-            if (IsEmpty(name))
+            if (!IsEveryFieldCorrect())
             {
-                MessageBox.Show("Введите название");
                 return;
             }
+
+            string name = textBox_Name.Text;
 
             string tmp = "SELECT count(*) FROM ( " +
                             "    SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
                             "        'SELECT sa.countries.id, sa.countries.name " +
-                            "        FROM sa.countries' ) as companies (id integer, name text) " +
+                            "        FROM sa.countries' ) as countries (id integer, name text) " +
                             "    UNION " +
                             "    SELECT sb.countries.id, sb.countries.name " +
                             "    FROM sb.countries) a " +
@@ -119,28 +122,28 @@ namespace RIS
 
         private void button_Change_Click(object sender, EventArgs e)
         {
-            if (IsEmpty(label_id.Text))
+            if (label_id.Text == "")
             {
                 MessageBox.Show("Выберите страну");
                 return;
             }
-            int country_id = Convert.ToInt32(label_id.Text);
             if (label_id.Text == label_ServerB.Text)
             {
                 MessageBox.Show("Нельзя изменить");
                 return;
             }
-            string name = textBox_Name.Text;
-            if (IsEmpty(name))
+
+            if (!IsEveryFieldCorrect())
             {
-                MessageBox.Show("Введите новое название");
                 return;
             }
+            string name = textBox_Name.Text;
+            int country_id = Convert.ToInt32(label_id.Text);
             
             string tmp = "SELECT count(*) FROM ( " +
                             "    SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
                             "        'SELECT sa.countries.id, sa.countries.name " +
-                            "        FROM sa.countries' ) as companies (id integer, name text) " +
+                            "        FROM sa.countries' ) as countries (id integer, name text) " +
                             "    UNION " +
                             "    SELECT sb.countries.id, sb.countries.name " +
                             "    FROM sb.countries) a " +
@@ -175,7 +178,44 @@ namespace RIS
 
         private void button_Delete_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Функция удаления страны не поддерживается");
+            if (label_id.Text == "")
+            {
+                MessageBox.Show("Выберите страну");
+                return;
+            }
+
+            if (label_id.Text == label_ServerB.Text)
+            {
+                MessageBox.Show("Нельзя удалить");
+                return;
+            }
+            
+            int country_id = Convert.ToInt32(label_id.Text);
+            
+            NpgsqlCommand tmpcmd = new NpgsqlCommand("func_search_companies_by_country", conn);
+            tmpcmd.CommandType = System.Data.CommandType.StoredProcedure;
+            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
+
+            if ((int)tmpcmd.ExecuteScalar() == 0)
+            {
+                try
+                {
+                    var cmdData = new Npgsql.NpgsqlCommand("func_countries_on_delete", conn);
+                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
+                    cmdData.ExecuteNonQuery();
+                    MessageBox.Show("Страна удалена");
+                    RefreshData();
+                }
+                catch
+                {
+                    MessageBox.Show("Smth wrong on country delete");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Невозможно удалить страну - есть связанные данные");
+            }
         }
 
         private void Form_Countries_FormClosing(object sender, FormClosingEventArgs e)
@@ -192,7 +232,6 @@ namespace RIS
                     int row = e.RowIndex;
                     int column = e.ColumnIndex;
                     DataGridViewCell clickedCell = (sender as DataGridView).Rows[row].Cells[column];
-                    //dataGridView1.CurrentCell = clickedCell;
                     dataGridView_Countries.Rows[row].Selected = true;
                     textBox_Name.Text = (string)dataGridView_Countries["name", row].Value;
                     label_id.Text = ((int)dataGridView_Countries["id", row].Value).ToString();
