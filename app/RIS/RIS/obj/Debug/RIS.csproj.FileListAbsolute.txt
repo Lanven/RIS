@@ -33,7 +33,9 @@ C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.cs
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.exe
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.pdb
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Categories.resources
-C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Add_Category.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Add_Order.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Search_Client.resources
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Search_Goods.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Countries.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Clients.resources
+C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Form_Companies.resources

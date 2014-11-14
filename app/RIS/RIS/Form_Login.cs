@@ -13,44 +13,48 @@ namespace RIS
 {
     public partial class Form_Login : Form
     {
-        Form_Main mainForm;
-        public Form_Login(Form_Main mainForm)
+        public string server { get; set; }
+        public int servId { get; set; }
+        public string login { get; set; }
+        //public string database { get; set; }
+        public string connStr { get; set; }
+
+        public Form_Login()
         {
             InitializeComponent();
-            this.mainForm = mainForm;
         }
 
         private void button_LogIn_Click(object sender, EventArgs e)
         {
-            string login = textBox_Login.Text;
+            this.login = textBox_Login.Text;
             string password = textBox_Password.Text;
             int serv = comboBox_Server.SelectedIndex;
-            string server;
             switch (serv)
             {
                 case 0:
-                    server = "students.ami.nstu.ru";
+                    this.servId = 0;
+                    this.server = "students.ami.nstu.ru";
                     break;
                 case 1:
-                    server = "127.0.0.1";
+                    this.servId = 1;
+                    this.server = "127.0.0.1";
                     break;
                 default:
                     comboBox_Server.BackColor = Color.Crimson;
                     return;
             }
-            string connString;
-            connString = "Server=" + server + ";Database=risbd6;User Id=" + login + ";Password=" + password + ";";
+            this.connStr = "Server=" + server + ";Database=risbd6;User Id=" + login + ";Password=" + password + ";";
             try
             {
-                NpgsqlConnection conn = new NpgsqlConnection(connString);
+                NpgsqlConnection conn = new NpgsqlConnection(connStr);
                 conn.Open();
-                mainForm.conn = conn;
-                mainForm.serv = serv;
-                this.Hide();
+                this.DialogResult = DialogResult.OK;
+                conn.Close();
+                this.Close();
             }
             catch
             {
-                MessageBox.Show("Smth has gone wrong!");
+                MessageBox.Show("Неверный логин/пароль.");
             }
         }
     }

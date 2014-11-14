@@ -2,11 +2,12 @@
 --DROP FUNCTION func_distribution_company_on_insert();
 
 CREATE OR REPLACE FUNCTION func_clients_on_insert (p_surname text,
-								p_name text, p_patronymic text,
-								p_birthdate date, p_phone text,
-								p_email text, p_address text,
-								p_passport_series text, p_passport_number text,
-								p_issue_date date, p_issue_department text) RETURNS void AS $$
+							p_name text, p_patronymic text,
+							p_birthdate date, p_phone text,
+							p_email text, p_address text,
+							p_passport_series text, p_passport_number text,
+							p_issue_date date, p_issue_department text)
+					RETURNS void AS $$
 DECLARE
  p_id integer;
 

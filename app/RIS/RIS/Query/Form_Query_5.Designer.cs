@@ -63,21 +63,20 @@
             // 
             this.dataGridView_Firms.AllowUserToAddRows = false;
             this.dataGridView_Firms.AllowUserToDeleteRows = false;
+            this.dataGridView_Firms.AllowUserToOrderColumns = true;
             this.dataGridView_Firms.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Firms.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Firms.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Firms.Location = new System.Drawing.Point(12, 72);
             this.dataGridView_Firms.Name = "dataGridView_Firms";
             this.dataGridView_Firms.ReadOnly = true;
-            this.dataGridView_Firms.Size = new System.Drawing.Size(468, 336);
+            this.dataGridView_Firms.Size = new System.Drawing.Size(922, 337);
             this.dataGridView_Firms.TabIndex = 2;
             // 
             // numericUpDown_Month
             // 
-            this.numericUpDown_Month.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.numericUpDown_Month.Location = new System.Drawing.Point(405, 12);
             this.numericUpDown_Month.Maximum = new decimal(new int[] {
             12,
@@ -102,9 +101,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 423);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 424);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(492, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(946, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -117,7 +116,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(492, 445);
+            this.ClientSize = new System.Drawing.Size(946, 446);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.numericUpDown_Month);
             this.Controls.Add(this.dataGridView_Firms);
@@ -125,6 +124,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_5";
             this.Text = "Запрос 5";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_5_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Firms)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Month)).EndInit();
             this.statusStrip1.ResumeLayout(false);

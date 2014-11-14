@@ -54,11 +54,12 @@
             this.dataGridView_Clients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Clients.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Clients.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Clients.Location = new System.Drawing.Point(15, 43);
             this.dataGridView_Clients.Name = "dataGridView_Clients";
             this.dataGridView_Clients.ReadOnly = true;
-            this.dataGridView_Clients.Size = new System.Drawing.Size(463, 302);
+            this.dataGridView_Clients.Size = new System.Drawing.Size(919, 369);
             this.dataGridView_Clients.TabIndex = 1;
             // 
             // button_Get
@@ -75,9 +76,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 357);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 424);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(490, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(946, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -90,13 +91,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(490, 379);
+            this.ClientSize = new System.Drawing.Size(946, 446);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button_Get);
             this.Controls.Add(this.dataGridView_Clients);
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_3";
             this.Text = "Запрос 3";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_3_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Clients)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

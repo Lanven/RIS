@@ -58,28 +58,52 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Edit\Form_Clients.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edit\Form_Clients.Designer.cs">
+      <DependentUpon>Form_Clients.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edit\Form_Companies.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edit\Form_Companies.Designer.cs">
+      <DependentUpon>Form_Companies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edit\Form_Countries.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edit\Form_Countries.Designer.cs">
+      <DependentUpon>Form_Countries.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edit\Form_Goods.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edit\Form_Goods.Designer.cs">
+      <DependentUpon>Form_Goods.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Edit\Form_Orders.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edit\Form_Orders.Designer.cs">
+      <DependentUpon>Form_Orders.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_About.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form_About.Designer.cs">
       <DependentUpon>Form_About.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Add_Category.cs">
+    <Compile Include="Misc\Form_Add_Order.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Add_Category.Designer.cs">
-      <DependentUpon>Form_Add_Category.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Form_Add_Order.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form_Add_Order.Designer.cs">
+    <Compile Include="Misc\Form_Add_Order.Designer.cs">
       <DependentUpon>Form_Add_Order.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Categories.cs">
+    <Compile Include="Edit\Form_Categories.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Categories.Designer.cs">
+    <Compile Include="Edit\Form_Categories.Designer.cs">
       <DependentUpon>Form_Categories.cs</DependentUpon>
     </Compile>
     <Compile Include="Form_Login.cs">
@@ -94,40 +118,40 @@
     <Compile Include="Form_Main.Designer.cs">
       <DependentUpon>Form_Main.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Query_2.cs">
+    <Compile Include="Query\Form_Query_2.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Query_2.Designer.cs">
+    <Compile Include="Query\Form_Query_2.Designer.cs">
       <DependentUpon>Form_Query_2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Query_3.cs">
+    <Compile Include="Query\Form_Query_3.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Query_3.Designer.cs">
+    <Compile Include="Query\Form_Query_3.Designer.cs">
       <DependentUpon>Form_Query_3.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Query_4.cs">
+    <Compile Include="Query\Form_Query_4.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Query_4.Designer.cs">
+    <Compile Include="Query\Form_Query_4.Designer.cs">
       <DependentUpon>Form_Query_4.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Query_5.cs">
+    <Compile Include="Query\Form_Query_5.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Query_5.Designer.cs">
+    <Compile Include="Query\Form_Query_5.Designer.cs">
       <DependentUpon>Form_Query_5.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Query_6.cs">
+    <Compile Include="Query\Form_Query_6.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Query_6.Designer.cs">
+    <Compile Include="Query\Form_Query_6.Designer.cs">
       <DependentUpon>Form_Query_6.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Query_7.cs">
+    <Compile Include="Query\Form_Query_7.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Query_7.Designer.cs">
+    <Compile Include="Query\Form_Query_7.Designer.cs">
       <DependentUpon>Form_Query_7.cs</DependentUpon>
     </Compile>
     <Compile Include="Form_Query_Excel.cs">
@@ -142,30 +166,36 @@
     <Compile Include="Form_Query_Word.Designer.cs">
       <DependentUpon>Form_Query_Word.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Search_Client.cs">
+    <Compile Include="Misc\Form_Search_Client.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Search_Client.Designer.cs">
+    <Compile Include="Misc\Form_Search_Client.Designer.cs">
       <DependentUpon>Form_Search_Client.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Search_Goods.cs">
+    <Compile Include="Misc\Form_Search_Goods.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Search_Goods.Designer.cs">
+    <Compile Include="Misc\Form_Search_Goods.Designer.cs">
       <DependentUpon>Form_Search_Goods.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Edit\Form_Clients.resx">
+      <DependentUpon>Form_Clients.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edit\Form_Companies.resx">
+      <DependentUpon>Form_Companies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edit\Form_Countries.resx">
+      <DependentUpon>Form_Countries.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form_About.resx">
       <DependentUpon>Form_About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Add_Category.resx">
-      <DependentUpon>Form_Add_Category.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Form_Add_Order.resx">
+    <EmbeddedResource Include="Misc\Form_Add_Order.resx">
       <DependentUpon>Form_Add_Order.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Categories.resx">
+    <EmbeddedResource Include="Edit\Form_Categories.resx">
       <DependentUpon>Form_Categories.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form_Login.resx">
@@ -174,22 +204,22 @@
     <EmbeddedResource Include="Form_Main.resx">
       <DependentUpon>Form_Main.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Query_2.resx">
+    <EmbeddedResource Include="Query\Form_Query_2.resx">
       <DependentUpon>Form_Query_2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Query_3.resx">
+    <EmbeddedResource Include="Query\Form_Query_3.resx">
       <DependentUpon>Form_Query_3.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Query_4.resx">
+    <EmbeddedResource Include="Query\Form_Query_4.resx">
       <DependentUpon>Form_Query_4.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Query_5.resx">
+    <EmbeddedResource Include="Query\Form_Query_5.resx">
       <DependentUpon>Form_Query_5.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Query_6.resx">
+    <EmbeddedResource Include="Query\Form_Query_6.resx">
       <DependentUpon>Form_Query_6.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Query_7.resx">
+    <EmbeddedResource Include="Query\Form_Query_7.resx">
       <DependentUpon>Form_Query_7.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form_Query_Excel.resx">
@@ -198,10 +228,10 @@
     <EmbeddedResource Include="Form_Query_Word.resx">
       <DependentUpon>Form_Query_Word.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Search_Client.resx">
+    <EmbeddedResource Include="Misc\Form_Search_Client.resx">
       <DependentUpon>Form_Search_Client.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Search_Goods.resx">
+    <EmbeddedResource Include="Misc\Form_Search_Goods.resx">
       <DependentUpon>Form_Search_Goods.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -226,6 +256,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

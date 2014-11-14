@@ -121,7 +121,8 @@
             // 
             // button_GetWordReport
             // 
-            this.button_GetWordReport.Location = new System.Drawing.Point(605, 473);
+            this.button_GetWordReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_GetWordReport.Location = new System.Drawing.Point(553, 371);
             this.button_GetWordReport.Name = "button_GetWordReport";
             this.button_GetWordReport.Size = new System.Drawing.Size(127, 23);
             this.button_GetWordReport.TabIndex = 8;
@@ -133,9 +134,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 513);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 411);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(744, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(693, 22);
             this.statusStrip1.TabIndex = 9;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -149,11 +150,15 @@
             this.dataGridView_Data.AllowUserToAddRows = false;
             this.dataGridView_Data.AllowUserToDeleteRows = false;
             this.dataGridView_Data.AllowUserToOrderColumns = true;
+            this.dataGridView_Data.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Data.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Data.Location = new System.Drawing.Point(15, 204);
             this.dataGridView_Data.Name = "dataGridView_Data";
             this.dataGridView_Data.ReadOnly = true;
-            this.dataGridView_Data.Size = new System.Drawing.Size(717, 263);
+            this.dataGridView_Data.Size = new System.Drawing.Size(665, 161);
             this.dataGridView_Data.TabIndex = 10;
             // 
             // button_GetFirmList
@@ -171,18 +176,21 @@
             this.dataGridView_Firm.AllowUserToAddRows = false;
             this.dataGridView_Firm.AllowUserToDeleteRows = false;
             this.dataGridView_Firm.AllowUserToOrderColumns = true;
+            this.dataGridView_Firm.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Firm.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Firm.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Firm.Location = new System.Drawing.Point(15, 131);
             this.dataGridView_Firm.Name = "dataGridView_Firm";
             this.dataGridView_Firm.ReadOnly = true;
-            this.dataGridView_Firm.Size = new System.Drawing.Size(717, 67);
+            this.dataGridView_Firm.Size = new System.Drawing.Size(665, 67);
             this.dataGridView_Firm.TabIndex = 12;
             // 
             // Form_Query_Word
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(744, 535);
+            this.ClientSize = new System.Drawing.Size(693, 433);
             this.Controls.Add(this.dataGridView_Firm);
             this.Controls.Add(this.button_GetFirmList);
             this.Controls.Add(this.dataGridView_Data);
@@ -198,6 +206,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_Word";
             this.Text = "Формирование Word-отчета";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_Word_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Data)).EndInit();

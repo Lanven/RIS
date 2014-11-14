@@ -14,36 +14,49 @@ namespace RIS
 {
     public partial class Form_Query_4 : Form
     {
-        NpgsqlConnection conn;
-        public Form_Query_4(NpgsqlConnection conn)
+        private string connStr;
+        private NpgsqlConnection conn;
+
+        public Form_Query_4(string connStr)
         {
             InitializeComponent();
-            this.conn = conn;
+            this.connStr = connStr;
+            this.conn = new NpgsqlConnection(connStr);
+            try
+            {
+                conn.Open();
+            }
+            catch
+            {
+                MessageBox.Show("Something wrong with connection");
+                this.Close();
+            }
+
             dataGridView_Countries.AutoGenerateColumns = true;
         }
 
         private void button_Get_Click(object sender, EventArgs e)
         {
             Stopwatch timer = new Stopwatch();
-
-            DataSet dataSetClients = new DataSet();
             DataTable table = new DataTable();
-            
-            string query = "SELECT name, summa "+
-                            "FROM sa.countries " +
-                            "ORDER BY summa DESC NULLS LAST, name ASC";
 
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
+            NpgsqlCommand command = new NpgsqlCommand("query04", conn);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
 
             timer.Start();
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-
             da.Fill(table);
-
-            dataGridView_Countries.DataSource = table;
             timer.Stop();
+            dataGridView_Countries.DataSource = table;
+            dataGridView_Countries.Columns["nam"].HeaderCell.Value = "Страна";
+            dataGridView_Countries.Columns["summ"].HeaderCell.Value = "Сумма продаж";
             double time = timer.ElapsedMilliseconds;
             toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+        }
+
+        private void Form_Query_4_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            conn.Close();
         }
 
     }

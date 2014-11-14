@@ -60,16 +60,21 @@
             this.dataGridView_Data.AllowUserToAddRows = false;
             this.dataGridView_Data.AllowUserToDeleteRows = false;
             this.dataGridView_Data.AllowUserToOrderColumns = true;
+            this.dataGridView_Data.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Data.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Data.Location = new System.Drawing.Point(15, 121);
             this.dataGridView_Data.Name = "dataGridView_Data";
             this.dataGridView_Data.ReadOnly = true;
-            this.dataGridView_Data.Size = new System.Drawing.Size(717, 346);
+            this.dataGridView_Data.Size = new System.Drawing.Size(671, 341);
             this.dataGridView_Data.TabIndex = 22;
             // 
             // button_GetExcelReport
             // 
-            this.button_GetExcelReport.Location = new System.Drawing.Point(605, 473);
+            this.button_GetExcelReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_GetExcelReport.Location = new System.Drawing.Point(559, 468);
             this.button_GetExcelReport.Name = "button_GetExcelReport";
             this.button_GetExcelReport.Size = new System.Drawing.Size(127, 23);
             this.button_GetExcelReport.TabIndex = 21;
@@ -153,9 +158,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 513);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 508);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(744, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(703, 22);
             this.statusStrip1.TabIndex = 25;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -168,7 +173,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(744, 535);
+            this.ClientSize = new System.Drawing.Size(703, 530);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button_GetFirmList);
             this.Controls.Add(this.dataGridView_Data);
@@ -183,6 +188,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_Excel";
             this.Text = "Формирование Excel-отчета";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_Excel_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Data)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

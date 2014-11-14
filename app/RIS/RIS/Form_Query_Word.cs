@@ -16,33 +16,35 @@ namespace RIS
 {
     public partial class Form_Query_Word : Form
     {
-        NpgsqlConnection conn;
+        private string connStr;
+        private NpgsqlConnection conn;
 
-        public Form_Query_Word(NpgsqlConnection conn)
+        public Form_Query_Word(string connStr)
         {
             InitializeComponent();
-            this.conn = conn;
+            this.connStr = connStr;
+            this.conn = new NpgsqlConnection(connStr);
+            try
+            {
+                conn.Open();
+            }
+            catch
+            {
+                MessageBox.Show("Something wrong with connection");
+                this.Close();
+            }
+
+            getFirmList();
             dataGridView_Data.AutoGenerateColumns = true;
         }
 
-        private void button_GetFirmList_Click(object sender, EventArgs e)
+        private void getFirmList()
         {
             Stopwatch timer = new Stopwatch();
-
-            DataSet dataSet = new DataSet();
             System.Data.DataTable table = new System.Data.DataTable();
 
-            string query = "SELECT * FROM (" +
-	                       "     SELECT * " +
-                           "     FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                           "     'SELECT sa.companies.id, sa.companies.name" +
-                           " FROM sa.companies' ) as companies (id integer, name text)" +
-                           " UNION" +
-                           " SELECT sb.companies.id, sb.companies.name" + 
-                           " FROM sb.companies) a" + 
-                           " ORDER BY 2";
-
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
+            NpgsqlCommand command = new NpgsqlCommand("query81", conn);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
 
             timer.Start();
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
@@ -57,7 +59,12 @@ namespace RIS
             toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
         }
 
-        private bool checkIsDate(string str)
+        private void button_GetFirmList_Click(object sender, EventArgs e)
+        {
+            getFirmList();
+        }
+
+        private bool IsDate(string str)
         {
             DateTime myDate;
             if (DateTime.TryParse(str, out myDate))
@@ -69,75 +76,76 @@ namespace RIS
         {
             Stopwatch timer = new Stopwatch();
             DataSet dataSet = new DataSet();
-            System.Data.DataTable table = new System.Data.DataTable();
+            System.Data.DataTable tableData = new System.Data.DataTable();
             System.Data.DataTable tableFirm = new System.Data.DataTable();
 
             string from = textBox_From.Text;
             string to = textBox_To.Text;
 
-            if (!checkIsDate(from) || !checkIsDate(to))
+            if (!IsDate(from) || !IsDate(to))
             {
-                MessageBox.Show("Incorrect");
+                MessageBox.Show("Incorrect dates");
                 return;
             }
 
             string tmp = "select count(*) from sb.companies a where a.id = :id";
-            NpgsqlCommand tmpcommand = new NpgsqlCommand(tmp, conn);
-            tmpcommand.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
+            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
+            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
             
-            string query, firm;
-            if ((long)tmpcommand.ExecuteScalar() == 0)
+            if ((long)tmpcmd.ExecuteScalar() == 0)
             {
-                var cmd = new Npgsql.NpgsqlCommand("query82", conn);
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                NpgsqlDataAdapter da0 = new NpgsqlDataAdapter(cmd);
-                da0.Fill(tableFirm);
+                var cmdFirm = new Npgsql.NpgsqlCommand("query82dblink", conn);
+                cmdFirm.CommandType = System.Data.CommandType.StoredProcedure;
+                cmdFirm.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
+                NpgsqlDataAdapter daFirm = new NpgsqlDataAdapter(cmdFirm);
+                daFirm.Fill(tableFirm);
                 dataGridView_Firm.DataSource = tableFirm;
 
-                var cmd1 = new Npgsql.NpgsqlCommand("query83", conn);
-                cmd1.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd1.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                cmd1.Parameters.Add("from", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(from);
-                cmd1.Parameters.Add("to", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(to);
+
+                var cmdData = new Npgsql.NpgsqlCommand("query83dblink", conn);
+                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
+                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
+                cmdData.Parameters.Add("from", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(from);
+                cmdData.Parameters.Add("to", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(to);
                 timer.Start();
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(cmd1);
-                da.Fill(table);
-                dataGridView_Data.DataSource = table;
+                NpgsqlDataAdapter daData = new NpgsqlDataAdapter(cmdData);
+                daData.Fill(tableData);
+                dataGridView_Data.DataSource = tableData;
                 timer.Stop();
             }
             else
             {
-                firm = "SELECT sb.companies.name, sb.countries.name as country, head_full_name, phone, address, bank_details  " +
-                        "FROM sb.companies " +
-                        "JOIN sb.countries ON sb.countries.id = sb.companies.country_id " +
-                        "WHERE sb.companies.id = :id";
-                query = "SELECT sb.categories.title, good.model, sb.payment_methods.title, sum(sale_amount) " +
-                        "FROM (SELECT id, category_id, model FROM sb.goods_main WHERE company_id = :id) as good " +
-                        "JOIN sb.categories ON sb.categories.id = good.category_id " +
-                        "JOIN sb.orders_main ON sb.orders_main.goods_id = good.id " +
-                        "JOIN sb.payment_methods ON sb.payment_methods.id = sb.orders_main.payment_method_id  " +
-                        "WHERE on_sale_date BETWEEN :from and :to " +
-                        "GROUP BY sb.categories.title, good.model, sb.payment_methods.title " +
-                        "ORDER BY 4 DESC, 1 ASC ";
-                NpgsqlCommand commandFirm = new NpgsqlCommand(firm, conn);
-                commandFirm.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                NpgsqlDataAdapter da1 = new NpgsqlDataAdapter(commandFirm);
-                da1.Fill(tableFirm);
+                NpgsqlCommand cmdFirm = new NpgsqlCommand("query82", conn);
+                cmdFirm.CommandType = System.Data.CommandType.StoredProcedure;
+                cmdFirm.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
+                NpgsqlDataAdapter daFirm = new NpgsqlDataAdapter(cmdFirm);
+                daFirm.Fill(tableFirm);
                 dataGridView_Firm.DataSource = tableFirm;
-                NpgsqlCommand command = new NpgsqlCommand(query, conn);
-                command.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                command.Parameters.Add("from", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(from);
-                command.Parameters.Add("to", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(to);
+                NpgsqlCommand cmdData = new NpgsqlCommand("query83", conn);
+                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
+                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
+                cmdData.Parameters.Add("from", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(from);
+                cmdData.Parameters.Add("to", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(to);
                 timer.Start();
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-                da.Fill(table);
-                dataGridView_Data.DataSource = table;
+                NpgsqlDataAdapter daData = new NpgsqlDataAdapter(cmdData);
+                daData.Fill(tableData);
+                dataGridView_Data.DataSource = tableData;
                 timer.Stop();
             }
+            dataGridView_Firm.Columns["company_name"].HeaderCell.Value = "Компания";
+            dataGridView_Firm.Columns["country_name"].HeaderCell.Value = "Страна";
+            dataGridView_Firm.Columns["head_full_nam"].HeaderCell.Value = "Директор";
+            dataGridView_Firm.Columns["phon"].HeaderCell.Value = "Телефон";
+            dataGridView_Firm.Columns["addres"].HeaderCell.Value = "Адрес";
+            dataGridView_Firm.Columns["bank_detail"].HeaderCell.Value = "Реквизиты";
+
+            dataGridView_Data.Columns["category"].HeaderCell.Value = "Категория";
+            dataGridView_Data.Columns["modell"].HeaderCell.Value = "Модель";
+            dataGridView_Data.Columns["payment_method"].HeaderCell.Value = "Метод оплаты";
+            dataGridView_Data.Columns["summ"].HeaderCell.Value = "Сумма";
 
             double time = timer.ElapsedMilliseconds;
-            toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            toolStripStatusLabel.Text = Convert.ToString(tableData.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
         }
 
         private void button_GetWordReport_Click(object sender, EventArgs e)
@@ -186,6 +194,11 @@ namespace RIS
                     wordCellRange.Text = dataGridView_Data.Rows[i].Cells[j].Value.ToString();
                 }
             }
+        }
+
+        private void Form_Query_Word_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            conn.Close();
         }
     }
 }

@@ -43,7 +43,7 @@
             this.comboBox_Server.Items.AddRange(new object[] {
             "Сервер А (students)",
             "Сервер Б (local)"});
-            this.comboBox_Server.Location = new System.Drawing.Point(45, 64);
+            this.comboBox_Server.Location = new System.Drawing.Point(45, 31);
             this.comboBox_Server.Name = "comboBox_Server";
             this.comboBox_Server.Size = new System.Drawing.Size(197, 21);
             this.comboBox_Server.TabIndex = 0;
@@ -51,7 +51,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(42, 48);
+            this.label1.Location = new System.Drawing.Point(42, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(47, 13);
             this.label1.TabIndex = 5;
@@ -60,7 +60,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(42, 102);
+            this.label2.Location = new System.Drawing.Point(42, 85);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 13);
             this.label2.TabIndex = 6;
@@ -69,7 +69,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(42, 150);
+            this.label3.Location = new System.Drawing.Point(42, 133);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(48, 13);
             this.label3.TabIndex = 7;
@@ -77,7 +77,7 @@
             // 
             // textBox_Login
             // 
-            this.textBox_Login.Location = new System.Drawing.Point(45, 118);
+            this.textBox_Login.Location = new System.Drawing.Point(45, 101);
             this.textBox_Login.Name = "textBox_Login";
             this.textBox_Login.Size = new System.Drawing.Size(197, 20);
             this.textBox_Login.TabIndex = 1;
@@ -85,7 +85,7 @@
             // 
             // textBox_Password
             // 
-            this.textBox_Password.Location = new System.Drawing.Point(45, 166);
+            this.textBox_Password.Location = new System.Drawing.Point(45, 149);
             this.textBox_Password.Name = "textBox_Password";
             this.textBox_Password.PasswordChar = '*';
             this.textBox_Password.Size = new System.Drawing.Size(197, 20);
@@ -94,7 +94,7 @@
             // 
             // button_LogIn
             // 
-            this.button_LogIn.Location = new System.Drawing.Point(111, 227);
+            this.button_LogIn.Location = new System.Drawing.Point(99, 175);
             this.button_LogIn.Name = "button_LogIn";
             this.button_LogIn.Size = new System.Drawing.Size(75, 23);
             this.button_LogIn.TabIndex = 3;
@@ -106,7 +106,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(284, 213);
             this.Controls.Add(this.button_LogIn);
             this.Controls.Add(this.textBox_Password);
             this.Controls.Add(this.textBox_Login);
@@ -114,6 +114,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox_Server);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form_Login";
             this.Text = "Подключение";
             this.ResumeLayout(false);

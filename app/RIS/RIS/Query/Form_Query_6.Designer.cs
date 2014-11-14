@@ -43,9 +43,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 280);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 424);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(502, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(946, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -103,18 +103,19 @@
             this.dataGridView_Orders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Orders.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Orders.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Orders.Location = new System.Drawing.Point(12, 69);
             this.dataGridView_Orders.Name = "dataGridView_Orders";
             this.dataGridView_Orders.ReadOnly = true;
-            this.dataGridView_Orders.Size = new System.Drawing.Size(478, 196);
+            this.dataGridView_Orders.Size = new System.Drawing.Size(922, 340);
             this.dataGridView_Orders.TabIndex = 4;
             // 
             // Form_Query_6
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(502, 302);
+            this.ClientSize = new System.Drawing.Size(946, 446);
             this.Controls.Add(this.dataGridView_Orders);
             this.Controls.Add(this.numericUpDown_Month);
             this.Controls.Add(this.button_Get);
@@ -122,6 +123,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Name = "Form_Query_6";
             this.Text = "Запрос 6";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_6_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Month)).EndInit();

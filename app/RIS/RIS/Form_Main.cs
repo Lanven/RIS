@@ -7,22 +7,56 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Npgsql;
-using System.Runtime.InteropServices;
 
 namespace RIS
 {
     public partial class Form_Main : Form
     {
-        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern double Add(double a, double b);
-        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern double Subtract(double a, double b);
-        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern double Multiply(double a, double b);
+        //[DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern double Add(double a, double b);
+        //[DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern double Subtract(double a, double b);
+        //[DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern double Multiply(double a, double b);
+        private string connStr;
+        private bool show;
 
-        public NpgsqlConnection conn;
-        public int serv;//можно получить из конекшена вообщет
+        public Form_Main()
+        {
+            InitializeComponent();
+            this.Hide();
+            show = false;
+            beforeEnter();
+             //label1.Text = Convert.ToString(Add(23, 15));
+        }
+
+        private void Form_Main_Shown(object sender, EventArgs e)
+        {
+            if (show == false)
+                this.Close();
+        }
+        private void Form_Main_VisibleChanged(object sender, EventArgs e)
+        {
+            if (show == false)
+                this.Close();
+        }
+
+        private void beforeEnter()
+        {
+            Form_Login Login_Form = new Form_Login();
+            var res = Login_Form.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                    string server = Login_Form.server;
+                    int servId = Login_Form.servId;
+                    string login = Login_Form.login;
+                    connStr = Login_Form.connStr;
+                    toolStripStatusLabel_Main.Text = "Подключено к " + server + ". Login: " + login;
+                    SetMenuStates(servId);
+                    show = true;
+            }
+            this.Show();
+        }
 
         private void SetMenuStates(int server)
         {
@@ -36,17 +70,15 @@ namespace RIS
 
             wordToolStripMenuItem.Enabled = !state;
             excelToolStripMenuItem.Enabled = !state;
+
+            данныеToolStripMenuItem.Enabled = !state;
         }
 
-        public Form_Main()
+        private void выйтиToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitializeComponent();
-            Form_Login Login_Form = new Form_Login(this);
-            Login_Form.ShowDialog();
-            SetMenuStates(serv);
-
-            label1.Text = Convert.ToString(Add(23, 15));
-            //toolStripStatusLabel_Main.Text = "Подключено к " + conn.Host + ". ДБ: " + conn.Database;
+            this.Hide();
+            show = false;
+            beforeEnter();
         }
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
@@ -62,70 +94,116 @@ namespace RIS
 
         private void запрос2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_2 QueryForm = new Form_Query_2(conn);
-            QueryForm.Show();
-        }
-
-        private void запрос5ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form_Query_5 QueryForm = new Form_Query_5(conn);
+            Form_Query_2 QueryForm = new Form_Query_2(connStr);
             QueryForm.Show();
         }
 
         private void запрос3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_3 QueryForm = new Form_Query_3(conn);
+            Form_Query_3 QueryForm = new Form_Query_3(connStr);
             QueryForm.Show();
         }
-
+        
         private void запрос4ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_4 QueryForm = new Form_Query_4(conn);
+            Form_Query_4 QueryForm = new Form_Query_4(connStr);
             QueryForm.Show();
         }
 
+        private void запрос5ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Query_5 QueryForm = new Form_Query_5(connStr);
+            QueryForm.Show();
+        }
+        
         private void запрос6ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_6 QueryForm = new Form_Query_6(conn);
+            Form_Query_6 QueryForm = new Form_Query_6(connStr);
             QueryForm.Show();
         }
 
         private void запрос7ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_7 QueryForm = new Form_Query_7(conn);
+            Form_Query_7 QueryForm = new Form_Query_7(connStr);
             QueryForm.Show();
         }
 
         private void wordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_Word QueryForm = new Form_Query_Word(conn);
+            Form_Query_Word QueryForm = new Form_Query_Word(connStr);
             QueryForm.Show();
         }
 
         private void excelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_Excel QueryForm = new Form_Query_Excel(conn);
+            Form_Query_Excel QueryForm = new Form_Query_Excel(connStr);
             QueryForm.Show();
         }
 
         private void категорииToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Categories QueryForm = new Form_Categories(conn);
+            Form_Categories QueryForm = new Form_Categories(connStr);
             QueryForm.Show();
         }
 
-        private void категориюToolStripMenuItem_Click(object sender, EventArgs e)
+        private void страныToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Add_Category QueryForm = new Form_Add_Category(conn);
+            Form_Countries QueryForm = new Form_Countries(connStr);
             QueryForm.Show();
         }
 
-        private void продажуToolStripMenuItem_Click(object sender, EventArgs e)
+        private void клиентыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Add_Order QueryForm = new Form_Add_Order(conn);
+            Form_Clients QueryForm = new Form_Clients(connStr);
+            QueryForm.Show();
+        }
+
+        private void компанииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Companies QueryForm = new Form_Companies(connStr);
             QueryForm.Show();
         }
 
 
+
+
+
+        /*
+        private void категорииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Categories QueryForm = new Form_Categories(connStr);
+            QueryForm.Show();
+        }
+
+        private void компанииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Companies QueryForm = new Form_Companies(connStr);
+            QueryForm.Show();
+        }
+
+        private void товарыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Goods QueryForm = new Form_Goods(connStr);
+            QueryForm.Show();
+        }
+
+        private void заказыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Orders QueryForm = new Form_Orders(connStr);
+            QueryForm.Show();
+        }
+
+        private void клиентыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Clients QueryForm = new Form_Clients(connStr);
+            QueryForm.Show();
+        }
+
+        private void страныToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form_Countries QueryForm = new Form_Countries(connStr);
+            QueryForm.Show();
+        }
+        */
     }
 }
