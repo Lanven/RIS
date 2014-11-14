@@ -16,11 +16,13 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
-        DataTable table;
+        private DataTable dataTable_Orders;
 
         public Form_Orders(string connStr)
         {
             InitializeComponent();
+            comboBox_Server.SelectedIndex = 0;
+
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
             try
@@ -33,7 +35,7 @@ namespace RIS
                 this.Close();
             }
 
-            this.table = new DataTable();
+            this.dataTable_Orders = new DataTable();
             dataGridView_Orders.AutoGenerateColumns = true;
             GetGoods();
             GetClients();
@@ -41,11 +43,11 @@ namespace RIS
             GetSaleTypes();
 
             RefreshData();
-            dataGridView_Orders.DataSource = table;
-            table.Columns.Add("goods");
-            table.Columns.Add("client");
-            table.Columns.Add("payment_method");
-            table.Columns.Add("sale_type");
+            dataGridView_Orders.DataSource = dataTable_Orders;
+            dataTable_Orders.Columns.Add("goods");
+            dataTable_Orders.Columns.Add("client");
+            dataTable_Orders.Columns.Add("payment_method");
+            dataTable_Orders.Columns.Add("sale_type");
             //dataGridView_Categories.Columns["id"].Visible = false;
             dataGridView_Orders.Columns["id"].HeaderText = "id";
             dataGridView_Orders.Columns["goods_id"].Visible = false;
@@ -164,7 +166,7 @@ namespace RIS
 
         private void RefreshData() /**alert**/
         {
-            table.Clear();
+            dataTable_Orders.Clear();
             string query = "SELECT * FROM ( " +
                             "    SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
                             "        'SELECT sa.goods_main.id, category_id, company_id, model, price " +
@@ -178,7 +180,7 @@ namespace RIS
 
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
+            da.Fill(dataTable_Orders);
         }
 
         private void dataGridView_Orders_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)

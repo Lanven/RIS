@@ -41,7 +41,7 @@
             this.button_Delete = new System.Windows.Forms.Button();
             this.label_id = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox_Server = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -55,17 +55,23 @@
             // 
             this.dataGridView_Orders.AllowUserToAddRows = false;
             this.dataGridView_Orders.AllowUserToDeleteRows = false;
-            this.dataGridView_Orders.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView_Orders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Orders.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridView_Orders.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Orders.Location = new System.Drawing.Point(12, 45);
+            this.dataGridView_Orders.MultiSelect = false;
             this.dataGridView_Orders.Name = "dataGridView_Orders";
             this.dataGridView_Orders.ReadOnly = true;
+            this.dataGridView_Orders.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_Orders.Size = new System.Drawing.Size(904, 326);
-            this.dataGridView_Orders.TabIndex = 0;
+            this.dataGridView_Orders.TabIndex = 11;
             this.dataGridView_Orders.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_Orders_CellMouseDown);
             // 
             // comboBox_Goods
             // 
+            this.comboBox_Goods.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.comboBox_Goods.FormattingEnabled = true;
             this.comboBox_Goods.Location = new System.Drawing.Point(203, 407);
             this.comboBox_Goods.Name = "comboBox_Goods";
@@ -74,6 +80,7 @@
             // 
             // comboBox_Client
             // 
+            this.comboBox_Client.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.comboBox_Client.FormattingEnabled = true;
             this.comboBox_Client.Location = new System.Drawing.Point(307, 407);
             this.comboBox_Client.Name = "comboBox_Client";
@@ -82,6 +89,7 @@
             // 
             // textBox_On_sale_date
             // 
+            this.textBox_On_sale_date.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.textBox_On_sale_date.Location = new System.Drawing.Point(567, 407);
             this.textBox_On_sale_date.Name = "textBox_On_sale_date";
             this.textBox_On_sale_date.Size = new System.Drawing.Size(109, 20);
@@ -89,13 +97,15 @@
             // 
             // textBox_Sale_Amount
             // 
+            this.textBox_Sale_Amount.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.textBox_Sale_Amount.Location = new System.Drawing.Point(529, 450);
             this.textBox_Sale_Amount.Name = "textBox_Sale_Amount";
             this.textBox_Sale_Amount.Size = new System.Drawing.Size(147, 20);
-            this.textBox_Sale_Amount.TabIndex = 4;
+            this.textBox_Sale_Amount.TabIndex = 6;
             // 
             // comboBox_Payment_Method
             // 
+            this.comboBox_Payment_Method.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.comboBox_Payment_Method.FormattingEnabled = true;
             this.comboBox_Payment_Method.Location = new System.Drawing.Point(366, 449);
             this.comboBox_Payment_Method.Name = "comboBox_Payment_Method";
@@ -104,23 +114,27 @@
             // 
             // comboBox_Sale_Type
             // 
+            this.comboBox_Sale_Type.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.comboBox_Sale_Type.FormattingEnabled = true;
             this.comboBox_Sale_Type.Location = new System.Drawing.Point(203, 449);
             this.comboBox_Sale_Type.Name = "comboBox_Sale_Type";
             this.comboBox_Sale_Type.Size = new System.Drawing.Size(157, 21);
-            this.comboBox_Sale_Type.TabIndex = 6;
+            this.comboBox_Sale_Type.TabIndex = 4;
             // 
             // richTextBox_Details
             // 
+            this.richTextBox_Details.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.richTextBox_Details.Location = new System.Drawing.Point(203, 493);
             this.richTextBox_Details.Name = "richTextBox_Details";
             this.richTextBox_Details.ReadOnly = true;
             this.richTextBox_Details.Size = new System.Drawing.Size(314, 69);
             this.richTextBox_Details.TabIndex = 7;
+            this.richTextBox_Details.TabStop = false;
             this.richTextBox_Details.Text = "Не поддерживается ()";
             // 
             // button_Create
             // 
+            this.button_Create.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_Create.Location = new System.Drawing.Point(716, 405);
             this.button_Create.Name = "button_Create";
             this.button_Create.Size = new System.Drawing.Size(75, 23);
@@ -130,6 +144,7 @@
             // 
             // button_Change
             // 
+            this.button_Change.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_Change.Location = new System.Drawing.Point(716, 448);
             this.button_Change.Name = "button_Change";
             this.button_Change.Size = new System.Drawing.Size(75, 23);
@@ -139,6 +154,7 @@
             // 
             // button_Delete
             // 
+            this.button_Delete.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_Delete.Location = new System.Drawing.Point(716, 493);
             this.button_Delete.Name = "button_Delete";
             this.button_Delete.Size = new System.Drawing.Size(75, 23);
@@ -148,6 +164,7 @@
             // 
             // label_id
             // 
+            this.label_id.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label_id.AutoSize = true;
             this.label_id.Location = new System.Drawing.Point(147, 410);
             this.label_id.Name = "label_id";
@@ -163,20 +180,21 @@
             this.label1.TabIndex = 12;
             this.label1.Text = "Сервер:";
             // 
-            // comboBox1
+            // comboBox_Server
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.comboBox_Server.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_Server.FormattingEnabled = true;
+            this.comboBox_Server.Items.AddRange(new object[] {
             "Сервер А",
             "Сервер Б"});
-            this.comboBox1.Location = new System.Drawing.Point(69, 12);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(193, 21);
-            this.comboBox1.TabIndex = 13;
+            this.comboBox_Server.Location = new System.Drawing.Point(69, 12);
+            this.comboBox_Server.Name = "comboBox_Server";
+            this.comboBox_Server.Size = new System.Drawing.Size(193, 21);
+            this.comboBox_Server.TabIndex = 0;
             // 
             // label2
             // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(200, 391);
             this.label2.Name = "label2";
@@ -186,6 +204,7 @@
             // 
             // label3
             // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(304, 391);
             this.label3.Name = "label3";
@@ -195,6 +214,7 @@
             // 
             // label4
             // 
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(567, 391);
             this.label4.Name = "label4";
@@ -204,6 +224,7 @@
             // 
             // label5
             // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(203, 433);
             this.label5.Name = "label5";
@@ -213,6 +234,7 @@
             // 
             // label6
             // 
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(363, 433);
             this.label6.Name = "label6";
@@ -222,6 +244,7 @@
             // 
             // label7
             // 
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(526, 433);
             this.label7.Name = "label7";
@@ -240,7 +263,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.comboBox_Server);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label_id);
             this.Controls.Add(this.button_Delete);
@@ -278,7 +301,7 @@
         private System.Windows.Forms.Button button_Delete;
         private System.Windows.Forms.Label label_id;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBox_Server;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
