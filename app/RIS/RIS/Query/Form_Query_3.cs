@@ -38,26 +38,33 @@ namespace RIS
 
         private void button_Get_Click(object sender, EventArgs e)
         {
-            Stopwatch timer = new Stopwatch();
-            DataTable table = new DataTable();
-            NpgsqlCommand command = new NpgsqlCommand("query03", conn);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
-            timer.Start();
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            timer.Stop();
-            dataGridView_Clients.DataSource = table;
+            try
+            {
+                Stopwatch timer = new Stopwatch();
+                DataTable table = new DataTable();
+                NpgsqlCommand command = new NpgsqlCommand("query03", conn);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                timer.Start();
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+                da.Fill(table);
+                timer.Stop();
+                dataGridView_Clients.DataSource = table;
 
-            dataGridView_Clients.Columns["surnam"].HeaderCell.Value = "Фамилия";
-            dataGridView_Clients.Columns["nam"].HeaderCell.Value = "Имя";
-            dataGridView_Clients.Columns["patronymi"].HeaderCell.Value = "Отчество";
-            dataGridView_Clients.Columns["birthdat"].HeaderCell.Value = "Дата рождения";
-            dataGridView_Clients.Columns["phon"].HeaderCell.Value = "Телефон";
-            dataGridView_Clients.Columns["emai"].HeaderCell.Value = "Е-мэйл";
-            dataGridView_Clients.Columns["addres"].HeaderCell.Value = "Адрес";
+                dataGridView_Clients.Columns["surnam"].HeaderCell.Value = "Фамилия";
+                dataGridView_Clients.Columns["nam"].HeaderCell.Value = "Имя";
+                dataGridView_Clients.Columns["patronymi"].HeaderCell.Value = "Отчество";
+                dataGridView_Clients.Columns["birthdat"].HeaderCell.Value = "Дата рождения";
+                dataGridView_Clients.Columns["phon"].HeaderCell.Value = "Телефон";
+                dataGridView_Clients.Columns["emai"].HeaderCell.Value = "Е-мэйл";
+                dataGridView_Clients.Columns["addres"].HeaderCell.Value = "Адрес";
 
-            double time = timer.ElapsedMilliseconds;
-            toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+                double time = timer.ElapsedMilliseconds;
+                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            }
+            catch 
+            {
+                MessageBox.Show("Smth wrong during query 3");
+            }
         }
 
         private void Form_Query_3_FormClosing(object sender, FormClosingEventArgs e)

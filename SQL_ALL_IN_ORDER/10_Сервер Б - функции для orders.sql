@@ -40,9 +40,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION func_orders_on_update(p_id integer, p_goods_id integer, p_client_id integer, 
 							      p_on_sale_date date, p_sale_amount numeric (12,2), 
 							      p_payment_method_id integer, p_sale_type_id integer, 
-							      p_details text, p_month integer) RETURNS void AS $$
-
+							      p_details text) RETURNS void AS $$
+DECLARE
+month integer;
 BEGIN
+month = EXTRACT (MONTH FROM p_on_sale_date);
 
 if (SELECT count(*) from sb.orders_main WHERE id = p_id)=0
     

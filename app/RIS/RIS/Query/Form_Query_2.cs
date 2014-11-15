@@ -38,31 +38,38 @@ namespace RIS
 
         private void button_Get_Click(object sender, EventArgs e)
         {
-            Stopwatch timer = new Stopwatch();
+            try
+            {
+                Stopwatch timer = new Stopwatch();
 
-            int month = (int)numericUpDown_Month.Value;
-            DataTable table = new DataTable();
+                int month = (int)numericUpDown_Month.Value;
+                DataTable table = new DataTable();
 
-            NpgsqlCommand command = new NpgsqlCommand("query02", conn);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
-            command.Parameters.Add("month", NpgsqlTypes.NpgsqlDbType.Integer).Value = month;
-            timer.Start();
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            timer.Stop();
-            dataGridView_Orders.DataSource = table;
-        
-            dataGridView_Orders.Columns["sale_date"].HeaderCell.Value = "Дата продажи";
-            dataGridView_Orders.Columns["category"].HeaderCell.Value = "Категория";
-            dataGridView_Orders.Columns["company"].HeaderCell.Value = "Компания";
-            dataGridView_Orders.Columns["modell"].HeaderCell.Value = "Модель";
-            dataGridView_Orders.Columns["country"].HeaderCell.Value = "Страна";
-            dataGridView_Orders.Columns["payment_method"].HeaderCell.Value = "Способ оплаты";
-            dataGridView_Orders.Columns["sale_type"].HeaderCell.Value = "Тип продажи";
-            dataGridView_Orders.Columns["summa"].HeaderCell.Value = "Сумма";
-            
-            double time = timer.ElapsedMilliseconds;
-            toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+                NpgsqlCommand command = new NpgsqlCommand("query02", conn);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("month", NpgsqlTypes.NpgsqlDbType.Integer).Value = month;
+                timer.Start();
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+                da.Fill(table);
+                timer.Stop();
+                dataGridView_Orders.DataSource = table;
+
+                dataGridView_Orders.Columns["sale_date"].HeaderCell.Value = "Дата продажи";
+                dataGridView_Orders.Columns["category"].HeaderCell.Value = "Категория";
+                dataGridView_Orders.Columns["company"].HeaderCell.Value = "Компания";
+                dataGridView_Orders.Columns["modell"].HeaderCell.Value = "Модель";
+                dataGridView_Orders.Columns["country"].HeaderCell.Value = "Страна";
+                dataGridView_Orders.Columns["payment_method"].HeaderCell.Value = "Способ оплаты";
+                dataGridView_Orders.Columns["sale_type"].HeaderCell.Value = "Тип продажи";
+                dataGridView_Orders.Columns["summa"].HeaderCell.Value = "Сумма";
+
+                double time = timer.ElapsedMilliseconds;
+                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            }
+            catch
+            {
+                MessageBox.Show("Smth wrong during query 2");
+            }
         }
 
         private void Form_Query_2_FormClosing(object sender, FormClosingEventArgs e)

@@ -37,21 +37,28 @@ namespace RIS
 
         private void button_Get_Click(object sender, EventArgs e)
         {
-            Stopwatch timer = new Stopwatch();
-            DataTable table = new DataTable();
+            try
+            {
+                Stopwatch timer = new Stopwatch();
+                DataTable table = new DataTable();
 
-            NpgsqlCommand command = new NpgsqlCommand("query04", conn);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
+                NpgsqlCommand command = new NpgsqlCommand("query04", conn);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            timer.Start();
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            timer.Stop();
-            dataGridView_Countries.DataSource = table;
-            dataGridView_Countries.Columns["nam"].HeaderCell.Value = "Страна";
-            dataGridView_Countries.Columns["summ"].HeaderCell.Value = "Сумма продаж";
-            double time = timer.ElapsedMilliseconds;
-            toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+                timer.Start();
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+                da.Fill(table);
+                timer.Stop();
+                dataGridView_Countries.DataSource = table;
+                dataGridView_Countries.Columns["nam"].HeaderCell.Value = "Страна";
+                dataGridView_Countries.Columns["summ"].HeaderCell.Value = "Сумма продаж";
+                double time = timer.ElapsedMilliseconds;
+                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            }
+            catch
+            {
+                MessageBox.Show("Smth wrong during query 4");
+            }
         }
 
         private void Form_Query_4_FormClosing(object sender, FormClosingEventArgs e)

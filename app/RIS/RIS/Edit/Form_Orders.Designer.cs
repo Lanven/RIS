@@ -58,7 +58,7 @@
             this.dataGridView_Orders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView_Orders.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dataGridView_Orders.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Orders.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_Orders.Location = new System.Drawing.Point(12, 45);
             this.dataGridView_Orders.MultiSelect = false;
@@ -141,6 +141,7 @@
             this.button_Create.TabIndex = 8;
             this.button_Create.Text = "Создать";
             this.button_Create.UseVisualStyleBackColor = true;
+            this.button_Create.Click += new System.EventHandler(this.button_Create_Click);
             // 
             // button_Change
             // 
@@ -151,6 +152,7 @@
             this.button_Change.TabIndex = 9;
             this.button_Change.Text = "Изменить";
             this.button_Change.UseVisualStyleBackColor = true;
+            this.button_Change.Click += new System.EventHandler(this.button_Change_Click);
             // 
             // button_Delete
             // 
@@ -161,6 +163,7 @@
             this.button_Delete.TabIndex = 10;
             this.button_Delete.Text = "Удалить";
             this.button_Delete.UseVisualStyleBackColor = true;
+            this.button_Delete.Click += new System.EventHandler(this.button_Delete_Click);
             // 
             // label_id
             // 
@@ -191,6 +194,7 @@
             this.comboBox_Server.Name = "comboBox_Server";
             this.comboBox_Server.Size = new System.Drawing.Size(193, 21);
             this.comboBox_Server.TabIndex = 0;
+            this.comboBox_Server.SelectionChangeCommitted += new System.EventHandler(this.comboBox_Server_SelectionChangeCommitted);
             // 
             // label2
             // 

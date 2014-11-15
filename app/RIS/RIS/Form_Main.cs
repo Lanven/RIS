@@ -7,17 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace RIS
 {
     public partial class Form_Main : Form
     {
-        //[DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern double Add(double a, double b);
-        //[DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern double Subtract(double a, double b);
-        //[DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern double Multiply(double a, double b);
+        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double Add(double a, double b);
+        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double Subtract(double a, double b);
+        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double Multiply(double a, double b);
         private string connStr;
         private bool show;
 
@@ -27,7 +28,7 @@ namespace RIS
             this.Hide();
             show = false;
             beforeEnter();
-             //label1.Text = Convert.ToString(Add(23, 15));
+            label1.Text += Convert.ToString(Add(5, 23));
         }
 
         private void Form_Main_Shown(object sender, EventArgs e)
@@ -174,46 +175,12 @@ namespace RIS
             QueryForm.Show();
         }
 
-
-
-
-
-        /*
-        private void категорииToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form_Categories QueryForm = new Form_Categories(connStr);
-            QueryForm.Show();
-        }
-
-        private void компанииToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form_Companies QueryForm = new Form_Companies(connStr);
-            QueryForm.Show();
-        }
-
-        private void товарыToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form_Goods QueryForm = new Form_Goods(connStr);
-            QueryForm.Show();
-        }
-
         private void заказыToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form_Orders QueryForm = new Form_Orders(connStr);
             QueryForm.Show();
         }
 
-        private void клиентыToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form_Clients QueryForm = new Form_Clients(connStr);
-            QueryForm.Show();
-        }
 
-        private void страныToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form_Countries QueryForm = new Form_Countries(connStr);
-            QueryForm.Show();
-        }
-        */
     }
 }

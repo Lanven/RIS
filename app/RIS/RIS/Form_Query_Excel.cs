@@ -87,6 +87,9 @@ namespace RIS
                 MessageBox.Show("Incorrect");
                 return;
             }
+            label5.Text = from;
+            label6.Text = to;
+            label7.Text = ((System.Data.DataRowView)comboBox_Firms.SelectedItem).Row["name"].ToString();
 
             string tmp = "select count(*) from sb.companies a where a.id = :id";
             NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
@@ -134,6 +137,15 @@ namespace RIS
 
         private void button_GetExcelReport_Click(object sender, EventArgs e)
         {
+            string from = label5.Text;
+            string to = label6.Text;
+            string name = label7.Text;
+
+            if (name == "")
+            {
+                MessageBox.Show("Пожалуйста, введите данные и нажмите просмотр");
+                return;
+            }
             Microsoft.Office.Interop.Excel.Application excelApp;
             excelApp = new Microsoft.Office.Interop.Excel.Application();
 
@@ -141,26 +153,38 @@ namespace RIS
             Worksheet excelWorkSheet;
             excelWorkBook = excelApp.Workbooks.Add();
             excelWorkSheet = (Worksheet)excelWorkBook.Worksheets[1];
+
+            excelApp.Cells[1, 1] = "Фирма";
+            excelWorkSheet.Cells[1, 1].Font.Bold = true;
+            excelWorkSheet.Range["B1:G1"].Merge();
+            excelApp.Cells[1, 2] = name;
+            excelWorkSheet.Cells[1, 2].Style.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+            excelWorkSheet.Cells[1, 2].Font.Bold = true;
+            excelWorkSheet.Cells[1, 2].Font.Size = 16;
+
+            excelApp.Cells[2, 1] = "Период:";
+            excelWorkSheet.Cells[2, 1].Font.Bold = true;
+            excelApp.Cells[2, 2] = from;
+            excelApp.Cells[2, 3] = to;
             
-            //ExcelWorkSheet.Range["A1:E1"].Merge();
-            //ExcelWorkSheet.Range["B2:E2"].Merge();
-            //ExcelApp.Cells[1, 1] = "Книги на руках";
-            //ExcelApp.Cells[2, 1] = "Читатель:";
-            //ExcelApp.Cells[2, 2] = name;
-            //int num = 1;
+
+            int num = 4;
             for (int i = 0; i < dataGridView_Data.ColumnCount; i++)
-                excelApp.Cells[1, i + 1] = dataGridView_Data.Columns[i].HeaderText;
+            {
+                excelApp.Cells[num, i + 1] = dataGridView_Data.Columns[i].HeaderText;
+            }
+            excelWorkSheet.Cells[num, 1].EntireRow.Font.Bold = true; 
+            num++;
 
             for (int i = 0; i < dataGridView_Data.Rows.Count; i++)
             {
                 for (int j = 0; j < dataGridView_Data.ColumnCount; j++)
                 {
-                    excelApp.Cells[i + 2, j + 1] = dataGridView_Data.Rows[i].Cells[j].Value;
+                    excelApp.Cells[num + i, j + 1] = dataGridView_Data.Rows[i].Cells[j].Value;
                 }
-               // num++;
             }
 
-            //excelWorkSheet.Range["A1:E" + Convert.ToString(num + 2)].Borders.LineStyle = XlLineStyle.xlContinuous;
+            excelWorkSheet.Range["A4:G" + Convert.ToString(dataGridView_Data.Rows.Count + num - 1)].Borders.LineStyle = XlLineStyle.xlContinuous;
             excelApp.Columns.AutoFit();
             excelApp.Visible = true;
             
@@ -169,6 +193,11 @@ namespace RIS
         private void Form_Query_Excel_FormClosing(object sender, FormClosingEventArgs e)
         {
             conn.Close();
+        }
+
+        private void comboBox_Firms_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+
         }
 
 

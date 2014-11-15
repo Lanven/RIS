@@ -68,6 +68,7 @@
             this.comboBox_Firms.Name = "comboBox_Firms";
             this.comboBox_Firms.Size = new System.Drawing.Size(346, 21);
             this.comboBox_Firms.TabIndex = 1;
+            this.comboBox_Firms.SelectionChangeCommitted += new System.EventHandler(this.comboBox_Firms_SelectionChangeCommitted);
             // 
             // label2
             // 

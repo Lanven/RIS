@@ -37,26 +37,33 @@ namespace RIS
 
         private void button_Get_Click(object sender, EventArgs e)
         {
-            Stopwatch timer = new Stopwatch();
+            try
+            {
+                Stopwatch timer = new Stopwatch();
 
-            int month = (int)numericUpDown_Month.Value;
-            DataTable table = new DataTable();
-            NpgsqlCommand command = new NpgsqlCommand("query06", conn);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
-            command.Parameters.Add("month", NpgsqlTypes.NpgsqlDbType.Integer).Value = month;
-            timer.Start();
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            timer.Stop();
-            dataGridView_Orders.DataSource = table;
-            dataGridView_Orders.Columns["sale_date"].HeaderCell.Value = "Дата продажи";
-            dataGridView_Orders.Columns["titl"].HeaderCell.Value = "Категория";
-            dataGridView_Orders.Columns["compid"].HeaderCell.Value = "ИД компании";
-            dataGridView_Orders.Columns["modell"].HeaderCell.Value = "Модель";
-            dataGridView_Orders.Columns["summa"].HeaderCell.Value = "Сумма";
+                int month = (int)numericUpDown_Month.Value;
+                DataTable table = new DataTable();
+                NpgsqlCommand command = new NpgsqlCommand("query06", conn);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("month", NpgsqlTypes.NpgsqlDbType.Integer).Value = month;
+                timer.Start();
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+                da.Fill(table);
+                timer.Stop();
+                dataGridView_Orders.DataSource = table;
+                dataGridView_Orders.Columns["sale_date"].HeaderCell.Value = "Дата продажи";
+                dataGridView_Orders.Columns["titl"].HeaderCell.Value = "Категория";
+                dataGridView_Orders.Columns["compid"].HeaderCell.Value = "ИД компании";
+                dataGridView_Orders.Columns["modell"].HeaderCell.Value = "Модель";
+                dataGridView_Orders.Columns["summa"].HeaderCell.Value = "Сумма";
 
-            double time = timer.ElapsedMilliseconds;
-            toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+                double time = timer.ElapsedMilliseconds;
+                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            }
+            catch
+            {
+                MessageBox.Show("Smth wrong during query 6");
+            }
         }
 
         private void Form_Query_6_FormClosing(object sender, FormClosingEventArgs e)

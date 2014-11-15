@@ -172,7 +172,7 @@ namespace RIS
             //int category_id = (int)comboBox_Category.SelectedValue;
             //int company_id = (int)comboBox_Company.SelectedValue;
 
-            //string details = richTextBox_Description.Text;
+            //string description = richTextBox_Description.Text;
 
             if (model == "")
             {

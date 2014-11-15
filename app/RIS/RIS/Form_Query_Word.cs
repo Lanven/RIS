@@ -150,34 +150,74 @@ namespace RIS
 
         private void button_GetWordReport_Click(object sender, EventArgs e)
         {
+            if (dataGridView_Firm.RowCount == 0)
+            {
+                MessageBox.Show("Пожалуйста, выберите фирму и нажмите просмотр");
+                return;
+            }
             Microsoft.Office.Interop.Word.Application wordApp;
+            object objStart, objEnd;
+            Range rngBold;
             wordApp = new Microsoft.Office.Interop.Word.Application();
-            wordApp.Visible = true;
+            
             Paragraph wordParagraph;
             Paragraphs wordParagraphs;
             Document doc = new Document();
             doc = wordApp.Documents.Add();
             wordParagraphs = doc.Paragraphs;
             wordParagraph = (Paragraph)wordParagraphs[1];
-            //Меняем характеристики текста и параграфа
+            
             wordParagraph.Range.Font.Size = 14;
             wordParagraph.Range.Font.Name = "Times New Roman";
             wordParagraph.Alignment = WdParagraphAlignment.wdAlignParagraphJustify;
 
             wordParagraph.Range.Text = "Фирма: " + dataGridView_Firm.Rows[0].Cells[0].Value;
+            objStart = wordParagraph.Range.Start;
+            objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
+            rngBold = doc.Range(ref objStart, ref objEnd);
+            rngBold.Bold = 1;
             doc.Paragraphs.Add();
-            wordParagraph.Range.Text = "Страна: " + dataGridView_Firm.Rows[0].Cells[1].Value;
-            doc.Paragraphs.Add();
-            wordParagraph.Range.Text = "Директор: " + dataGridView_Firm.Rows[0].Cells[2].Value;
-            doc.Paragraphs.Add();
-            wordParagraph.Range.Text = "Телефон: " + dataGridView_Firm.Rows[0].Cells[3].Value;
-            doc.Paragraphs.Add();
-            wordParagraph.Range.Text = "Адрес: " + dataGridView_Firm.Rows[0].Cells[4].Value;
-            doc.Paragraphs.Add();
-            wordParagraph.Range.Text = "Банковские реквизиты: " + dataGridView_Firm.Rows[0].Cells[5].Value;
 
+            wordParagraph.Range.Text = "Страна: " + dataGridView_Firm.Rows[0].Cells[1].Value;
+            objStart = wordParagraph.Range.Start;
+            objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
+            rngBold = doc.Range(ref objStart, ref objEnd);
+            rngBold.Bold = 1;
             doc.Paragraphs.Add();
+
+            wordParagraph.Range.Text = "Директор: " + dataGridView_Firm.Rows[0].Cells[2].Value;
+            objStart = wordParagraph.Range.Start;
+            objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
+            rngBold = doc.Range(ref objStart, ref objEnd);
+            rngBold.Bold = 1;
+            doc.Paragraphs.Add();
+
+            wordParagraph.Range.Text = "Телефон: " + dataGridView_Firm.Rows[0].Cells[3].Value;
+            objStart = wordParagraph.Range.Start;
+            objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
+            rngBold = doc.Range(ref objStart, ref objEnd);
+            rngBold.Bold = 1;
+            doc.Paragraphs.Add();
+
+            wordParagraph.Range.Text = "Адрес: " + dataGridView_Firm.Rows[0].Cells[4].Value;
+            objStart = wordParagraph.Range.Start;
+            objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
+            rngBold = doc.Range(ref objStart, ref objEnd);
+            rngBold.Bold = 1;
+            doc.Paragraphs.Add();
+
+            wordParagraph.Range.Text = "Банковские реквизиты: " + dataGridView_Firm.Rows[0].Cells[5].Value;
+            objStart = wordParagraph.Range.Start;
+            objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
+            rngBold = doc.Range(ref objStart, ref objEnd);
+            rngBold.Bold = 1;
+            doc.Paragraphs.Add();
+
+            wordParagraph.Range.Font.Size = 10;
             Table wordtable = doc.Tables.Add(wordParagraph.Range, dataGridView_Data.Rows.Count + 1, dataGridView_Data.ColumnCount);
+            wordtable.Borders.InsideLineStyle = WdLineStyle.wdLineStyleSingle;
+            wordtable.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleDouble;
+            wordtable.Range.Paragraphs.SpaceAfter = 0;
             Range wordCellRange;
 
             for (int i = 0; i < dataGridView_Data.ColumnCount; i++)
@@ -185,6 +225,7 @@ namespace RIS
                 wordCellRange = wordtable.Cell(1, i + 1).Range;
                 wordCellRange.Text = dataGridView_Data.Columns[i].HeaderText;
             }
+            wordtable.Rows[1].Range.Font.Bold = 1;
 
             for (int i = 0; i < dataGridView_Data.Rows.Count; i++)
             {
@@ -194,11 +235,18 @@ namespace RIS
                     wordCellRange.Text = dataGridView_Data.Rows[i].Cells[j].Value.ToString();
                 }
             }
+
+            wordApp.Visible = true;
         }
 
         private void Form_Query_Word_FormClosing(object sender, FormClosingEventArgs e)
         {
             conn.Close();
+        }
+
+        private void comboBox_Firms_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+
         }
     }
 }
