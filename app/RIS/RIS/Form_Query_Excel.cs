@@ -27,15 +27,16 @@ namespace RIS
             try
             {
                 conn.Open();
+                getFirmList();
+                dataGridView_Data.AutoGenerateColumns = true;
             }
             catch
             {
                 MessageBox.Show("Something wrong with connection");
                 this.Close();
+                return;
             }
-
-            getFirmList();
-            dataGridView_Data.AutoGenerateColumns = true;
+                        
         }
 
         private void getFirmList()
@@ -46,15 +47,17 @@ namespace RIS
             NpgsqlCommand command = new NpgsqlCommand("query91", conn);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            timer.Start();
+            
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
 
+            timer.Start();
             da.Fill(table);
+            timer.Stop();
 
             comboBox_Firms.DataSource = table;
             comboBox_Firms.DisplayMember = "name";
             comboBox_Firms.ValueMember = "id";
-            timer.Stop();
+           
             double time = timer.ElapsedMilliseconds;
             toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
 
@@ -111,7 +114,12 @@ namespace RIS
             else
             {
                 var cmdData = new Npgsql.NpgsqlCommand("query92", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
+                cmdData.CommandType = System.Data.CommandType.StoredProcedure;/*
+                [["id","int",Convert.ToInt32(comboBox_Firms.SelectedValue)],
+                 ["from","date",Convert.ToInt32(comboBox_Firms.SelectedValue)],
+                 ["to","date",Convert.ToInt32(comboBox_Firms.SelectedValue)]
+                ]*/
+
                 cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
                 cmdData.Parameters.Add("from", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(from);
                 cmdData.Parameters.Add("to", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(to);

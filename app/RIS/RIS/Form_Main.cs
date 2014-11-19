@@ -13,11 +13,11 @@ namespace RIS
 {
     public partial class Form_Main : Form
     {
-        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("Math.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern double Add(double a, double b);
-        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("Math.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern double Subtract(double a, double b);
-        [DllImport("MyDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("Math.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern double Multiply(double a, double b);
         private string connStr;
         private bool show;

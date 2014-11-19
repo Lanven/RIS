@@ -1,15 +1,9 @@
-﻿Сборка начата 07.11.2014 23:49:11.
-     1>Проект "c:\Users\администратор\documents\visual studio 2013\Projects\MyDLL\MyDLL\MyDLL.vcxproj" в узле 2 (целевые объекты Build).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D MYDLL_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\MyDLL.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt MyDLL.cpp
-         MyDLL.cpp
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"c:\users\администратор\documents\visual studio 2013\Projects\MyDLL\Debug\MyDLL.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"c:\users\администратор\documents\visual studio 2013\Projects\MyDLL\Debug\MyDLL.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"c:\users\администратор\documents\visual studio 2013\Projects\MyDLL\Debug\MyDLL.lib" /MACHINE:X86 /DLL Debug\dllmain.obj
-         Debug\MyDLL.obj
-         Debug\stdafx.obj
-         MyDLL.vcxproj -> c:\users\администратор\documents\visual studio 2013\Projects\MyDLL\Debug\MyDLL.dll
-     1>Сборка проекта "c:\Users\администратор\documents\visual studio 2013\Projects\MyDLL\MyDLL\MyDLL.vcxproj" завершена (целевые объекты Build).
+﻿Построение начато 11/15/2014 9:23:08 .
+     1>Проект "D:\RIS\MyDLL\MyDLL\MyDLL.vcxproj" в узле 2 (целевые объекты Rebuild).
+       Файл проекта содержит ToolsVersion="12.0". Данный набор инструментов является неизвестным или отсутствует. Для устранения этой ошибки можно установить для данного набора инструментов соответствующую версию .NET Framework. Считается, что проект содержит ToolsVersion="4.0".
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.Cpp.Platform.targets(44,5): error MSB8020: The builds tools for v120 (Platform Toolset = 'v120') cannot be found. To build using the v120 build tools, either click the Project menu or right-click the solution, and then select "Update VC++ Projects...". Install v120 to build using the v120 build tools.
+     1>Построение проекта "D:\RIS\MyDLL\MyDLL\MyDLL.vcxproj" завершено (целевые объекты Rebuild) с ошибкой.
 
-Сборка успешно завершена.
+Сбой построения.
 
-Затраченное время: 00:00:00.37
+Затраченное время: 00:00:00.32

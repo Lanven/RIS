@@ -61,8 +61,15 @@ namespace RIS
 
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            dataGridView_Countries.DataSource = table;
+            try
+            {
+                da.Fill(table);
+                dataGridView_Countries.DataSource = table;
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private bool IsEveryFieldCorrect()

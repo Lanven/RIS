@@ -40,18 +40,18 @@ namespace RIS
             GetCountries();         
             RefreshData();
             dataGridView_Companies.DataSource = dataTable_Companies;
-            dataTable_Companies.Columns.Add("country");
+       //     dataTable_Companies.Columns.Add("country");
             //dataGridView_Categories.Columns["id"].Visible = false;
             dataGridView_Companies.Columns["id"].HeaderText = "id";
             dataGridView_Companies.Columns["name"].HeaderText = "Название";
-            dataGridView_Companies.Columns["country"].HeaderText = "Страна";
-            dataGridView_Companies.Columns["country_id"].Visible = false;
+         //   dataGridView_Companies.Columns["country"].HeaderText = "Страна";
+          //  dataGridView_Companies.Columns["country_id"].Visible = false;
             dataGridView_Companies.Columns["head_full_name"].HeaderText = "ФИО директора";
             dataGridView_Companies.Columns["phone"].HeaderText = "Номер телефона";
             dataGridView_Companies.Columns["address"].HeaderText = "Юридический адрес компании";
-            dataGridView_Companies.Columns["bank_details"].HeaderText = "Банковские реквизиты компании";
+           // dataGridView_Companies.Columns["bank_details"].HeaderText = "Банковские реквизиты компании";
           
-            SetCountries();
+           // SetCountries();
         }
 
         private void SetCountries()
@@ -81,10 +81,17 @@ namespace RIS
    
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            comboBox_Country.DataSource = table;
-            comboBox_Country.DisplayMember = "name";
-            comboBox_Country.ValueMember = "id";
+            try
+            {
+                da.Fill(table);
+                comboBox_Country.DataSource = table;
+                comboBox_Country.DisplayMember = "name";
+                comboBox_Country.ValueMember = "id";
+            }
+            catch 
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void RefreshData()
@@ -95,7 +102,7 @@ namespace RIS
             {
                 case 0:
                     query = "SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "        'SELECT * FROM sa.companies' ) as companies (id integer, name text, country_id integer, head_full_name text, phone text, address text, bank_details text) ORDER BY 1";
+                            "        'SELECT id, name, country_id, head_full_name, phone, address FROM sa.companies' ) as companies (id integer, name text, country_id integer, head_full_name text, phone text, address text) ORDER BY 1";
                     break;
                 case 1:
                     query = "SELECT * FROM sb.companies ORDER BY 1";
@@ -128,7 +135,7 @@ namespace RIS
                     textBox_Head_full_name.Text = (string)dataGridView_Companies["head_full_name", row].Value;
                     textBox_Phone.Text = (string)dataGridView_Companies["phone", row].Value;
                     textBox_Address.Text = (string)dataGridView_Companies["address", row].Value;
-                    textBox_Bank_details.Text = (string)dataGridView_Companies["bank_details", row].Value;
+                    //textBox_Bank_details.Text = (string)dataGridView_Companies["bank_details", row].Value;
                     comboBox_Country.SelectedValue = (int)dataGridView_Companies["country_id", row].Value;
                 }
             }
@@ -185,7 +192,7 @@ namespace RIS
                 cmdData.ExecuteNonQuery();
                 MessageBox.Show("Компания создана");
                 RefreshData();
-                SetCountries();
+                //SetCountries();
             }
             catch
             {
@@ -226,7 +233,7 @@ namespace RIS
                 cmdData.ExecuteNonQuery();
                 MessageBox.Show("Компания изменена");
                 RefreshData();
-                SetCountries();
+                //SetCountries();
             }
             catch
             {
@@ -259,7 +266,7 @@ namespace RIS
                 cmdData.ExecuteNonQuery();
                 MessageBox.Show("Компания удалена");
                 RefreshData();
-                SetCountries();
+                //SetCountries();
             }
             catch
             {
@@ -272,7 +279,7 @@ namespace RIS
         {
             GetCountries();
             RefreshData();
-            SetCountries();
+         //   SetCountries();
         }
 
     }

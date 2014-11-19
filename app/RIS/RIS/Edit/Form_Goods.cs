@@ -53,8 +53,8 @@ namespace RIS
             dataGridView_Goods.Columns["price"].HeaderText = "Цена";
             //dataGridView_Goods.Columns["description"].HeaderText = "Описание товара";
 
-            SetCategories();
-            SetCompanies();
+            //SetCategories();
+            //SetCompanies();
         }
 
         private void SetCategories()
@@ -73,10 +73,17 @@ namespace RIS
             string query = "SELECT id, title FROM sb.categories ORDER BY 2; ";
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            comboBox_Category.DataSource = table;
-            comboBox_Category.DisplayMember = "title";
-            comboBox_Category.ValueMember = "id";
+            try
+            {
+                da.Fill(table);
+                comboBox_Category.DataSource = table;
+                comboBox_Category.DisplayMember = "title";
+                comboBox_Category.ValueMember = "id";
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void SetCompanies()
@@ -105,10 +112,17 @@ namespace RIS
             }
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            comboBox_Company.DataSource = table;
-            comboBox_Company.DisplayMember = "name";
-            comboBox_Company.ValueMember = "id";
+            try
+            {
+                da.Fill(table);
+                comboBox_Company.DataSource = table;
+                comboBox_Company.DisplayMember = "name";
+                comboBox_Company.ValueMember = "id";
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void RefreshData()
@@ -133,7 +147,14 @@ namespace RIS
 
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(dataTable_Goods);
+            try
+            {
+                da.Fill(dataTable_Goods);
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void Form_Goods_FormClosing(object sender, FormClosingEventArgs e)
@@ -218,8 +239,8 @@ namespace RIS
                 cmdData.ExecuteNonQuery();
                 MessageBox.Show("Товар создан");
                 RefreshData();
-                SetCategories();
-                SetCompanies();
+                //SetCategories();
+                //SetCompanies();
             }
             catch
             {
@@ -262,8 +283,8 @@ namespace RIS
                 cmdData.ExecuteNonQuery();
                 MessageBox.Show("Товар изменен");
                 RefreshData();
-                SetCategories();
-                SetCompanies();
+                //SetCategories();
+                //SetCompanies();
             }
             catch
             {
@@ -297,8 +318,8 @@ namespace RIS
                 cmdData.ExecuteNonQuery();
                 MessageBox.Show("Товар удален");
                 RefreshData();
-                SetCategories();
-                SetCompanies(); ;
+                //SetCategories();
+                //SetCompanies(); ;
             }
             catch
             {
@@ -311,8 +332,8 @@ namespace RIS
             GetCategories();
             GetCompanies();
             RefreshData();
-            SetCategories();
-            SetCompanies();
+            //SetCategories();
+            //SetCompanies();
         }
     }
 }

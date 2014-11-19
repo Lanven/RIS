@@ -102,10 +102,17 @@ namespace RIS
             }
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            comboBox_Goods.DataSource = table;
-            comboBox_Goods.DisplayMember = "model";
-            comboBox_Goods.ValueMember = "id";
+            try
+            {
+                da.Fill(table);
+                comboBox_Goods.DataSource = table;
+                comboBox_Goods.DisplayMember = "model";
+                comboBox_Goods.ValueMember = "id";
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void SetClients()
@@ -124,10 +131,17 @@ namespace RIS
             string query = "SELECT id, (surname ||' '|| name||' '||patronymic)as fio FROM sb.clients ORDER BY 2; ";
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            comboBox_Client.DataSource = table;
-            comboBox_Client.DisplayMember = "fio";
-            comboBox_Client.ValueMember = "id";
+            try
+            {
+                da.Fill(table);
+                comboBox_Client.DataSource = table;
+                comboBox_Client.DisplayMember = "fio";
+                comboBox_Client.ValueMember = "id";
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void SetPaymentMethods()
@@ -146,10 +160,17 @@ namespace RIS
             string query = "SELECT id, title FROM sb.payment_methods ORDER BY 2; ";
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            comboBox_Payment_Method.DataSource = table;
-            comboBox_Payment_Method.DisplayMember = "title";
-            comboBox_Payment_Method.ValueMember = "id";
+            try
+            {
+                da.Fill(table);
+                comboBox_Payment_Method.DataSource = table;
+                comboBox_Payment_Method.DisplayMember = "title";
+                comboBox_Payment_Method.ValueMember = "id";
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void SetSaleTypes()
@@ -168,10 +189,17 @@ namespace RIS
             string query = "SELECT id, title FROM sb.sale_types ORDER BY 2; ";
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            comboBox_Sale_Type.DataSource = table;
-            comboBox_Sale_Type.DisplayMember = "title";
-            comboBox_Sale_Type.ValueMember = "id";
+            try
+            {
+                da.Fill(table);
+                comboBox_Sale_Type.DataSource = table;
+                comboBox_Sale_Type.DisplayMember = "title";
+                comboBox_Sale_Type.ValueMember = "id";
+            }
+            catch 
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void RefreshData()
@@ -195,7 +223,14 @@ namespace RIS
 
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(dataTable_Orders);
+            try
+            {
+                da.Fill(dataTable_Orders);
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void dataGridView_Orders_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)

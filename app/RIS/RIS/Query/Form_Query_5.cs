@@ -61,7 +61,7 @@ namespace RIS
             }
             catch
             {
-                MessageBox.Show("Smth wrong durng query 5");
+                MessageBox.Show("Smth wrong during query 5");
             }
         }
 

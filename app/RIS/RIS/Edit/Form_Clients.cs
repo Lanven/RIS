@@ -64,8 +64,15 @@ namespace RIS
             
             NpgsqlCommand command = new NpgsqlCommand(query, conn);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(table);
-            dataGridView_Clients.DataSource = table;
+            try
+            {
+                da.Fill(table);
+                dataGridView_Clients.DataSource = table;
+            }
+            catch
+            {
+                MessageBox.Show("Cannot perform getting data");
+            }
         }
 
         private void Form_Clients_FormClosing(object sender, FormClosingEventArgs e)
