@@ -98,7 +98,6 @@
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_4";
             this.Text = "Запрос 4";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_4_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Countries)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

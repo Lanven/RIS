@@ -16,55 +16,44 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
+        private DataTable table;
+        private string queryName = "query04";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("nam", "text", "Страна"),
+                                                           new TableColumn("summ", "num", "Сумма продаж")};
 
         public Form_Query_4(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.table = new DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(table, dataGridView_Countries, columns);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
+                throw new Exception("Can't init datagrid: " + ex.Message);
             }
-
-            dataGridView_Countries.AutoGenerateColumns = true;
         }
 
         private void button_Get_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+            string result = "";
             try
             {
-                Stopwatch timer = new Stopwatch();
-                DataTable table = new DataTable();
-
-                NpgsqlCommand command = new NpgsqlCommand("query04", conn);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                timer.Start();
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-                da.Fill(table);
-                timer.Stop();
-                dataGridView_Countries.DataSource = table;
-                dataGridView_Countries.Columns["nam"].HeaderCell.Value = "Страна";
-                dataGridView_Countries.Columns["summ"].HeaderCell.Value = "Сумма продаж";
-                double time = timer.ElapsedMilliseconds;
-                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, table);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong during query 4");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
-
-        private void Form_Query_4_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
-        }
-
     }
 }

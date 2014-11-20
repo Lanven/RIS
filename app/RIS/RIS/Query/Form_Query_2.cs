@@ -14,69 +14,56 @@ namespace RIS
 {
     public partial class Form_Query_2 : Form
     {
-
         private string connStr;
         private NpgsqlConnection conn;
+        private DataTable table;
+        private string queryName = "query02";
+        List <TableColumn> columns = new List<TableColumn> {new TableColumn("sale_date", "date", "Дата продажи"),
+                                                            new TableColumn("category", "text", "Категория"),
+                                                            new TableColumn("company", "text", "Компания"),
+                                                            new TableColumn("modell", "text", "Модель"),
+                                                            new TableColumn("country", "text", "Страна"),
+                                                            new TableColumn("payment_method", "text", "Способ оплаты"),
+                                                            new TableColumn("sale_type", "text", "Тип продажи"),
+                                                            new TableColumn("summa", "num", "Сумма")};
                
         public Form_Query_2(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.table = new DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(table, dataGridView_Orders, columns);
             }
-            catch
-            {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
+            catch (Exception ex)
+            { 
+                throw new Exception("Can't init datagrid: " + ex.Message);
             }
-            
-            dataGridView_Orders.AutoGenerateColumns = true;
         }
 
         private void button_Get_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+            int month = (int)numericUpDown_Month.Value;
+
+            List<Parameter> parameters = new List<Parameter> { new Parameter("month", "int", month) };
+
+            string result = "";
             try
             {
-                Stopwatch timer = new Stopwatch();
-
-                int month = (int)numericUpDown_Month.Value;
-                DataTable table = new DataTable();
-
-                NpgsqlCommand command = new NpgsqlCommand("query02", conn);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.Parameters.Add("month", NpgsqlTypes.NpgsqlDbType.Integer).Value = month;
-                timer.Start();
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-                da.Fill(table);
-                timer.Stop();
-                dataGridView_Orders.DataSource = table;
-
-                dataGridView_Orders.Columns["sale_date"].HeaderCell.Value = "Дата продажи";
-                dataGridView_Orders.Columns["category"].HeaderCell.Value = "Категория";
-                dataGridView_Orders.Columns["company"].HeaderCell.Value = "Компания";
-                dataGridView_Orders.Columns["modell"].HeaderCell.Value = "Модель";
-                dataGridView_Orders.Columns["country"].HeaderCell.Value = "Страна";
-                dataGridView_Orders.Columns["payment_method"].HeaderCell.Value = "Способ оплаты";
-                dataGridView_Orders.Columns["sale_type"].HeaderCell.Value = "Тип продажи";
-                dataGridView_Orders.Columns["summa"].HeaderCell.Value = "Сумма";
-
-                double time = timer.ElapsedMilliseconds;
-                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, table, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong during query 2");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
-
-        private void Form_Query_2_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            this.conn.Close();
-        }
-
-
     }
 }

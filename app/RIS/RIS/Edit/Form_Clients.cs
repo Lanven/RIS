@@ -16,68 +16,60 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
+        private DataTable table;
+        private string queryName = "get_all_clients";
+        private string funcCreate = "func_clients_on_insert";
+        private string funcChange = "func_clients_on_update";
+        private string funcDelete = "func_clients_on_delete";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
+                                                            new TableColumn("surname", "text", "Фамилия"),
+                                                            new TableColumn("name", "text", "Имя"),
+                                                            new TableColumn("patronymic", "text", "Отчество"),
+                                                            new TableColumn("birthdate", "date", "Дата рождения"),
+                                                            new TableColumn("phone", "text", "Номер телефона"),
+                                                            new TableColumn("email", "text", "Адрес электронной почты"),
+                                                            new TableColumn("address", "text", "Адрес доставки"),
+                                                            new TableColumn("passport_series", "text", "Серия паспорта"),
+                                                            new TableColumn("passport_number", "text", "Номер паспорта"),
+                                                            new TableColumn("issue_date", "date", "Дата выдачи паспорта"),
+                                                            new TableColumn("issue_department", "text", "Код подразделения, выдавшего паспорт")};
+
 
         public Form_Clients(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.table = new DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(table, dataGridView_Clients, columns);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
+                throw new Exception("Can't init datagrid: " + ex.Message);
             }
-            dataGridView_Clients.AutoGenerateColumns = true;
 
-            RefreshData();
             //dataGridView_Categories.Columns["id"].Visible = false;
-            dataGridView_Clients.Columns["id"].HeaderText = "id";
-            dataGridView_Clients.Columns["surname"].HeaderText = "Фамилия";
-            dataGridView_Clients.Columns["name"].HeaderText = "Имя";
-            dataGridView_Clients.Columns["patronymic"].HeaderText = "Отчество";
-            dataGridView_Clients.Columns["birthdate"].HeaderText = "Дата рождения";
-            dataGridView_Clients.Columns["phone"].HeaderText = "Номер телефона";
-            dataGridView_Clients.Columns["email"].HeaderText = "Адрес электронной почты";
-            dataGridView_Clients.Columns["address"].HeaderText = "Адрес доставки";
-            dataGridView_Clients.Columns["passport_series"].HeaderText = "Серия паспорта";
-            dataGridView_Clients.Columns["passport_number"].HeaderText = "Номер паспорта";
-            dataGridView_Clients.Columns["issue_date"].HeaderText = "Дата выдачи паспорта";
-            dataGridView_Clients.Columns["issue_department"].HeaderText = "Код подразделения, выдавшего паспорт";
         }
 
         private void RefreshData()
         {
-            DataTable table = new DataTable();
-
-            string query = "SELECT a.id, surname, name, patronymic, birthdate, " +
-                            "phone, email, address, passport_series, passport_number, issue_date, issue_department " +
-                            "FROM ( " +
-                            "    SELECT id, phone, email, address FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "        'SELECT sa.clients.id, sa.clients.phone, sa.clients.email, sa.clients.address " +
-                            "        FROM sa.clients' ) as cli (id integer, phone text, email text, address text) " +
-                            "     ) a " +
-                            "JOIN sb.clients on a.id = sb.clients.id";
-            
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            string result = "";
+            Cursor.Current = Cursors.WaitCursor;
             try
             {
-                da.Fill(table);
-                dataGridView_Clients.DataSource = table;
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, table);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void Form_Clients_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void dataGridView_Clients_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -103,15 +95,9 @@ namespace RIS
                     textBox_Passport_number.Text = (string)dataGridView_Clients["passport_number", row].Value;
                     textBox_Issue_date.Text = ((DateTime)dataGridView_Clients["issue_date", row].Value).ToShortDateString();
                     textBox_Issue_department.Text = (string)dataGridView_Clients["issue_department", row].Value;
-
-
-
-                    //textBox_Title.Text = (string)dataGridView_Clients["title", row].Value;
-                    //label_id.Text = ((int)dataGridView_Clients["id", row].Value).ToString();
                 }
             }
         }
-
 
         private bool IsEveryFieldCorrect()
         {
@@ -185,6 +171,8 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
+
             string surname = textBox_Surname.Text;
             string name = textBox_Name.Text;
             string patronymic = textBox_Patronymic.Text;
@@ -203,42 +191,37 @@ namespace RIS
             string birthdate_str = textBox_Birthdate.Text;
             DateTime birthdate = DateTime.Parse(birthdate_str);
             
-            string tmp = "select count(*) from sb.clients a where a.passport_series LIKE :passport_series AND a.passport_number LIKE :passport_number";
-            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
-            tmpcmd.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
-            tmpcmd.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("surname", "text", surname),
+                                                                new Parameter("name", "text", name),
+                                                                new Parameter("patronymic", "text", patronymic),
+                                                                new Parameter("birthdate", "date", birthdate),
+                                                                new Parameter("phone", "text", phone),
+                                                                new Parameter("email", "text", email),
+                                                                new Parameter("address", "text", address),
+                                                                new Parameter("passport_series", "text", passport_series),
+                                                                new Parameter("passport_number", "text", passport_number),
+                                                                new Parameter("issue_date", "date", issue_date),
+                                                                new Parameter("issue_department", "text", issue_department)};
 
-            if ((long)tmpcmd.ExecuteScalar() == 0)
+            string result = "";
+            try
             {
-                try
-                {
-                    var cmdData = new Npgsql.NpgsqlCommand("func_clients_on_insert", conn);
-                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmdData.Parameters.Add("surname", NpgsqlTypes.NpgsqlDbType.Text).Value = surname;
-                    cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                    cmdData.Parameters.Add("patronymic", NpgsqlTypes.NpgsqlDbType.Text).Value = patronymic;
-                    cmdData.Parameters.Add("birthdate", NpgsqlTypes.NpgsqlDbType.Date).Value = birthdate;
-                    cmdData.Parameters.Add("phone", NpgsqlTypes.NpgsqlDbType.Text).Value = phone;
-                    cmdData.Parameters.Add("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
-                    cmdData.Parameters.Add("address", NpgsqlTypes.NpgsqlDbType.Text).Value = address;
-                    cmdData.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
-                    cmdData.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
-                    cmdData.Parameters.Add("issue_date", NpgsqlTypes.NpgsqlDbType.Date).Value = issue_date;
-                    cmdData.Parameters.Add("issue_department", NpgsqlTypes.NpgsqlDbType.Text).Value = issue_department;
-                    
-                    cmdData.ExecuteNonQuery();
-                    MessageBox.Show("Клиент создан");
-                    RefreshData();
-                }
-                catch
-                {
-                    MessageBox.Show("Smth wrong on client insert");
-                }
+                result = Class_Helper.ExecuteFunction(conn, funcCreate, parameters);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Клиент с такими паспортными данными уже существует");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "P0001")
+                        error = "Клиент уже существует";
+                    else
+                        error = "Smth wrong on client insert";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Клиент создан. " + result;
         }
 
         private void button_Change_Click(object sender, EventArgs e)
@@ -252,6 +235,7 @@ namespace RIS
             {
                 return;
             }
+            Cursor.Current = Cursors.WaitCursor;
 
             string surname = textBox_Surname.Text;
             string name = textBox_Name.Text;
@@ -273,43 +257,38 @@ namespace RIS
 
             int client_id = Convert.ToInt32(label_id.Text);
 
-            string tmp = "select count(*) from sb.clients a where a.passport_series LIKE :passport_series AND a.passport_number LIKE :passport_number AND a.id <> :id";
-            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
-            tmpcmd.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
-            tmpcmd.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
-            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", client_id),
+                                                                new Parameter("surname", "text", surname),
+                                                                new Parameter("name", "text", name),
+                                                                new Parameter("patronymic", "text", patronymic),
+                                                                new Parameter("birthdate", "date", birthdate),
+                                                                new Parameter("phone", "text", phone),
+                                                                new Parameter("email", "text", email),
+                                                                new Parameter("address", "text", address),
+                                                                new Parameter("passport_series", "text", passport_series),
+                                                                new Parameter("passport_number", "text", passport_number),
+                                                                new Parameter("issue_date", "date", issue_date),
+                                                                new Parameter("issue_department", "text", issue_department)};
 
-            if ((long)tmpcmd.ExecuteScalar() == 0)
+            string result = "";
+            try
             {
-                try
-                {
-                    var cmdData = new Npgsql.NpgsqlCommand("func_clients_on_update", conn);
-                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
-                    cmdData.Parameters.Add("surname", NpgsqlTypes.NpgsqlDbType.Text).Value = surname;
-                    cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                    cmdData.Parameters.Add("patronymic", NpgsqlTypes.NpgsqlDbType.Text).Value = patronymic;
-                    cmdData.Parameters.Add("birthdate", NpgsqlTypes.NpgsqlDbType.Date).Value = birthdate;
-                    cmdData.Parameters.Add("phone", NpgsqlTypes.NpgsqlDbType.Text).Value = phone;
-                    cmdData.Parameters.Add("email", NpgsqlTypes.NpgsqlDbType.Text).Value = email;
-                    cmdData.Parameters.Add("address", NpgsqlTypes.NpgsqlDbType.Text).Value = address;
-                    cmdData.Parameters.Add("passport_series", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_series;
-                    cmdData.Parameters.Add("passport_number", NpgsqlTypes.NpgsqlDbType.Text).Value = passport_number;
-                    cmdData.Parameters.Add("issue_date", NpgsqlTypes.NpgsqlDbType.Date).Value = issue_date;
-                    cmdData.Parameters.Add("issue_department", NpgsqlTypes.NpgsqlDbType.Text).Value = issue_department;
-                    cmdData.ExecuteNonQuery();
-                    MessageBox.Show("Клиент изменен");
-                    RefreshData();
-                }
-                catch
-                {
-                    MessageBox.Show("Smth wrong on client update");
-                }
+                result = Class_Helper.ExecuteFunction(conn, funcChange, parameters);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Клиент с такими данными уже существует");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "P0001")
+                        error = "Клиент уже существует";
+                    else
+                        error = "Smth wrong on client update";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Клиент изменен. " + result;
         }
 
         private void button_Delete_Click(object sender, EventArgs e)
@@ -327,21 +306,35 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
+
             int client_id = Convert.ToInt32(label_id.Text);
 
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", client_id) };
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_clients_on_delete", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Клиент удален");
-                RefreshData();
+                result = Class_Helper.ExecuteFunction(conn, funcDelete, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on client delete");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on client delete";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Клиент удален. " + result;
+        }
+
+        private void button_Refresh_Click(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     
     

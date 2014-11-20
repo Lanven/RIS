@@ -16,7 +16,25 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
-        private DataTable dataTable_Companies;
+        
+        private string funcCreate = "func_companies_on_insert";
+        private string funcChange = "func_companies_on_update";
+        private string funcDelete = "func_companies_on_delete";
+
+        private DataTable tableCompanies;
+        private string queryName = "get_companies_by_server";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
+                                                            new TableColumn("name", "text", "Название"),
+                                                            new TableColumn("country", "text", "Страна"),
+                                                            new TableColumn("country_id", "int", "country_id"),
+                                                            new TableColumn("head_full_name", "text", "ФИО директора"),
+                                                            new TableColumn("phone", "text", "Номер телефона"),
+                                                            new TableColumn("address", "text", "Юридический адрес компании"),
+                                                            new TableColumn("bank_details", "text", "Банковские реквизиты компании")};
+        private DataTable tableCountries;
+        private string queryCountries = "get_list_countries_by_server";
+        List<TableColumn> members = new List<TableColumn> {new TableColumn("name", "text", "Название"),
+                                                           new TableColumn("id", "int", "ИД")};
 
         public Form_Companies(string connStr)
         {
@@ -25,98 +43,63 @@ namespace RIS
 
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+
+            this.tableCompanies = new System.Data.DataTable();
+            this.tableCountries = new System.Data.DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(tableCompanies, dataGridView_Companies, columns);
+                Class_Helper.SetMember(tableCountries, comboBox_Country, members, "name", "id");
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
-            }
-
-            this.dataTable_Companies = new DataTable();
-            dataGridView_Companies.AutoGenerateColumns = true;         
-            GetCountries();         
-            RefreshData();
-            dataGridView_Companies.DataSource = dataTable_Companies;
-       //     dataTable_Companies.Columns.Add("country");
+                throw new Exception("Can't init datagrid/combobox: " + ex.Message);
+            }        
+            
             //dataGridView_Categories.Columns["id"].Visible = false;
-            dataGridView_Companies.Columns["id"].HeaderText = "id";
-            dataGridView_Companies.Columns["name"].HeaderText = "Название";
-         //   dataGridView_Companies.Columns["country"].HeaderText = "Страна";
-          //  dataGridView_Companies.Columns["country_id"].Visible = false;
-            dataGridView_Companies.Columns["head_full_name"].HeaderText = "ФИО директора";
-            dataGridView_Companies.Columns["phone"].HeaderText = "Номер телефона";
-            dataGridView_Companies.Columns["address"].HeaderText = "Юридический адрес компании";
-           // dataGridView_Companies.Columns["bank_details"].HeaderText = "Банковские реквизиты компании";
-          
-           // SetCountries();
-        }
-
-        private void SetCountries()
-        {
-            for(int i = 0; i < dataGridView_Companies.RowCount; i++)
-            {
-                comboBox_Country.SelectedValue = (int)dataGridView_Companies["country_id", i].Value;
-                dataGridView_Companies["country", i].Value = ((System.Data.DataRowView)comboBox_Country.SelectedItem).Row["name"];
-            }
-            comboBox_Country.SelectedIndex = 0;
+            //dataGridView_Companies.Columns["country_id"].Visible = false;
         }
 
         private void GetCountries()
         {
-            string query = "";
-            switch (comboBox_Server.SelectedIndex)
-            {
-                case 0:
-                    query = "SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "        'SELECT sa.countries.id, sa.countries.name FROM sa.countries' ) as countries (id integer, name text) ORDER BY 2; ";
-                    break;
-                case 1:
-                    query = "SELECT sb.countries.id, sb.countries.name FROM sb.countries ORDER BY 2; ";
-                    break;
-            }
-            System.Data.DataTable table = new System.Data.DataTable();      
-   
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            Cursor.Current = Cursors.WaitCursor;
+            int server_id = comboBox_Server.SelectedIndex;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", server_id) };
+            string result = "";
             try
             {
-                da.Fill(table);
-                comboBox_Country.DataSource = table;
-                comboBox_Country.DisplayMember = "name";
-                comboBox_Country.ValueMember = "id";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryCountries, tableCountries, parameters);
             }
-            catch 
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void RefreshData()
         {
-            dataTable_Companies.Clear();
-            string query = "";
-            switch (comboBox_Server.SelectedIndex)
+            string result = "";
+            Cursor.Current = Cursors.WaitCursor;
+            int server_id = comboBox_Server.SelectedIndex;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", server_id) };
+
+            try
             {
-                case 0:
-                    query = "SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "        'SELECT id, name, country_id, head_full_name, phone, address FROM sa.companies' ) as companies (id integer, name text, country_id integer, head_full_name text, phone text, address text) ORDER BY 1";
-                    break;
-                case 1:
-                    query = "SELECT * FROM sb.companies ORDER BY 1";
-                    break;
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, tableCompanies, parameters);
             }
-
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-            da.Fill(dataTable_Companies);
-        }
-
-        private void Form_Companies_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void dataGridView_Companies_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -135,7 +118,7 @@ namespace RIS
                     textBox_Head_full_name.Text = (string)dataGridView_Companies["head_full_name", row].Value;
                     textBox_Phone.Text = (string)dataGridView_Companies["phone", row].Value;
                     textBox_Address.Text = (string)dataGridView_Companies["address", row].Value;
-                    //textBox_Bank_details.Text = (string)dataGridView_Companies["bank_details", row].Value;
+                    textBox_Bank_details.Text = (string)dataGridView_Companies["bank_details", row].Value;
                     comboBox_Country.SelectedValue = (int)dataGridView_Companies["country_id", row].Value;
                 }
             }
@@ -171,6 +154,7 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             string name = textBox_Name.Text;
             string head_full_name = textBox_Head_full_name.Text;
             string phone = textBox_Phone.Text;
@@ -178,26 +162,33 @@ namespace RIS
             string bank_details = textBox_Bank_details.Text;
             int country_id = (int)comboBox_Country.SelectedValue;
 
+            List<Parameter> parameters = new List<Parameter> { new Parameter("name", "text", name),
+                                                                new Parameter("country_id", "int", country_id),
+                                                                new Parameter("head_full_name", "text", head_full_name),
+                                                                new Parameter("phone", "text", phone),
+                                                                new Parameter("address", "text", address),
+                                                                new Parameter("bank_details", "text", bank_details)};
+
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_companies_on_insert", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                cmdData.Parameters.Add("country_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
-                cmdData.Parameters.Add("head_full_name", NpgsqlTypes.NpgsqlDbType.Text).Value = head_full_name;
-                cmdData.Parameters.Add("phone", NpgsqlTypes.NpgsqlDbType.Text).Value = phone;
-                cmdData.Parameters.Add("address", NpgsqlTypes.NpgsqlDbType.Text).Value = address;
-                cmdData.Parameters.Add("bank_details", NpgsqlTypes.NpgsqlDbType.Text).Value = bank_details;
-                                
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Компания создана");
-                RefreshData();
-                //SetCountries();
+                result = Class_Helper.ExecuteFunction(conn, funcCreate, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on company insert");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on company insert";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Компания создана. " + result;
+
         }
 
         private void button_Change_Click(object sender, EventArgs e)
@@ -211,6 +202,8 @@ namespace RIS
             {
                 return;
             }
+            Cursor.Current = Cursors.WaitCursor;
+
             int company_id = Convert.ToInt32(label_id.Text);
             string name = textBox_Name.Text;
             string head_full_name = textBox_Head_full_name.Text;
@@ -218,27 +211,34 @@ namespace RIS
             string address = textBox_Address.Text;
             string bank_details = textBox_Bank_details.Text;
             int country_id = (int)comboBox_Country.SelectedValue;
+
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", company_id),
+                                                                new Parameter("name", "text", name),
+                                                                new Parameter("country_id", "int", country_id),
+                                                                new Parameter("head_full_name", "text", head_full_name),
+                                                                new Parameter("phone", "text", phone),
+                                                                new Parameter("address", "text", address),
+                                                                new Parameter("bank_details", "text", bank_details)};
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_companies_on_update", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("company_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = company_id;
-                cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                cmdData.Parameters.Add("country_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
-                cmdData.Parameters.Add("head_full_name", NpgsqlTypes.NpgsqlDbType.Text).Value = head_full_name;
-                cmdData.Parameters.Add("phone", NpgsqlTypes.NpgsqlDbType.Text).Value = phone;
-                cmdData.Parameters.Add("address", NpgsqlTypes.NpgsqlDbType.Text).Value = address;
-                cmdData.Parameters.Add("bank_details", NpgsqlTypes.NpgsqlDbType.Text).Value = bank_details;
-                
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Компания изменена");
-                RefreshData();
-                //SetCountries();
+                result = Class_Helper.ExecuteFunction(conn, funcChange, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on company update");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on company update";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Компания изменена. " + result;
+
         }
 
         private void button_Delete_Click(object sender, EventArgs e)
@@ -256,31 +256,37 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
+
             int country_id = Convert.ToInt32(label_id.Text);
 
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", country_id) };
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_companies_on_delete", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Компания удалена");
-                RefreshData();
-                //SetCountries();
+                result = Class_Helper.ExecuteFunction(conn, funcDelete, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on company delete");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on company delete";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Компания удалена. " + result;
 
         }
 
-        private void comboBox_Server_SelectionChangeCommitted(object sender, EventArgs e)
+        private void button_Refresh_Click(object sender, EventArgs e)
         {
             GetCountries();
             RefreshData();
-         //   SetCountries();
         }
-
     }
 }

@@ -125,7 +125,6 @@
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_2";
             this.Text = "Запрос 2";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_2_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Orders)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Month)).EndInit();
             this.statusStrip1.ResumeLayout(false);

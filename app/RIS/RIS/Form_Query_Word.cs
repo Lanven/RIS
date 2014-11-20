@@ -19,44 +19,65 @@ namespace RIS
         private string connStr;
         private NpgsqlConnection conn;
 
+        private System.Data.DataTable tableFirms;
+        private string queryFirms = "query81";
+        List<TableColumn> members = new List<TableColumn> {new TableColumn("name", "text", "Название"),
+                                                           new TableColumn("id", "int", "ИД")};
+        
+        private System.Data.DataTable tableInfo;
+        private string queryInfo = "query82";
+        List<TableColumn> columnsInfo = new List<TableColumn> {new TableColumn("company_name", "text", "Компания"),
+                                                               new TableColumn("country_name", "text", "Страна"),
+                                                               new TableColumn("head_full_nam", "text", "Директор"),
+                                                               new TableColumn("phon", "text", "Телефон"),
+                                                               new TableColumn("addres", "text", "Адрес"),
+                                                               new TableColumn("bank_detail", "text", "Реквизиты")};
+        
+        private System.Data.DataTable tableData;
+        private string queryData = "query83";
+        List<TableColumn> columnsData = new List<TableColumn> {new TableColumn("category", "text", "Категория"),
+                                                               new TableColumn("modell", "text", "Модель"),
+                                                               new TableColumn("payment_method", "text", "Метод оплаты"),
+                                                               new TableColumn("summ", "num", "Сумма")};
+
         public Form_Query_Word(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.tableFirms = new System.Data.DataTable();
+            this.tableInfo = new System.Data.DataTable();
+            this.tableData = new System.Data.DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(tableData, dataGridView_Data, columnsData);
+                Class_Helper.SetColumns(tableInfo, dataGridView_Firm, columnsInfo);
+                Class_Helper.SetMember(tableFirms, comboBox_Firms, members, "name", "id");
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
-            }
+                throw new Exception("Can't init datagrid/combobox: " + ex.Message);
+            }        
 
-            getFirmList();
-            dataGridView_Data.AutoGenerateColumns = true;
         }
 
         private void getFirmList()
         {
-            Stopwatch timer = new Stopwatch();
-            System.Data.DataTable table = new System.Data.DataTable();
-
-            NpgsqlCommand command = new NpgsqlCommand("query81", conn);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
-
-            timer.Start();
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-
-            da.Fill(table);
-
-            comboBox_Firms.DataSource = table;
-            comboBox_Firms.DisplayMember = "name";
-            comboBox_Firms.ValueMember = "id";
-            timer.Stop();
-            double time = timer.ElapsedMilliseconds;
-            toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            Cursor.Current = Cursors.WaitCursor;
+            string result = "";
+            try
+            {
+                result = Class_Helper.ExecuteStoredQuery(conn, queryFirms, tableFirms);
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel_1.Text = result;
         }
 
         private void button_GetFirmList_Click(object sender, EventArgs e)
@@ -74,85 +95,72 @@ namespace RIS
         
         private void button_GetLook_Click(object sender, EventArgs e)
         {
-            Stopwatch timer = new Stopwatch();
-            DataSet dataSet = new DataSet();
-            System.Data.DataTable tableData = new System.Data.DataTable();
-            System.Data.DataTable tableFirm = new System.Data.DataTable();
+            Cursor.Current = Cursors.WaitCursor;
+            if (comboBox_Firms.SelectedIndex == -1)
+            {
+                MessageBox.Show("Choose firm");
+                return;
+            }
 
-            string from = textBox_From.Text;
-            string to = textBox_To.Text;
+            int firmID = Convert.ToInt32(comboBox_Firms.SelectedValue);
+            string fromStr = maskedTextBox_From.Text;
+            string toStr = maskedTextBox_To.Text;
 
-            if (!IsDate(from) || !IsDate(to))
+            if (!IsDate(fromStr) || !IsDate(toStr))
             {
                 MessageBox.Show("Incorrect dates");
                 return;
             }
-
-            string tmp = "select count(*) from sb.companies a where a.id = :id";
-            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
-            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-            
-            if ((long)tmpcmd.ExecuteScalar() == 0)
+            DateTime from = DateTime.Parse(fromStr);
+            DateTime to = DateTime.Parse(toStr);
+            /**************************************/
+            label5.Text = fromStr;
+            label6.Text = toStr;
+            label7.Text = ((System.Data.DataRowView)comboBox_Firms.SelectedItem).Row["name"].ToString();
+            /**************************************/
+            List<Parameter> parametersInfo = new List<Parameter> { new Parameter("id", "int", firmID)};
+            string resultInfo = "";
+            try
             {
-                var cmdFirm = new Npgsql.NpgsqlCommand("query82dblink", conn);
-                cmdFirm.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdFirm.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                NpgsqlDataAdapter daFirm = new NpgsqlDataAdapter(cmdFirm);
-                daFirm.Fill(tableFirm);
-                dataGridView_Firm.DataSource = tableFirm;
-
-
-                var cmdData = new Npgsql.NpgsqlCommand("query83dblink", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                cmdData.Parameters.Add("from", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(from);
-                cmdData.Parameters.Add("to", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(to);
-                timer.Start();
-                NpgsqlDataAdapter daData = new NpgsqlDataAdapter(cmdData);
-                daData.Fill(tableData);
-                dataGridView_Data.DataSource = tableData;
-                timer.Stop();
+                resultInfo = Class_Helper.ExecuteStoredQuery(conn, queryInfo, tableInfo, parametersInfo);
             }
-            else
+            catch (Exception ex)
             {
-                NpgsqlCommand cmdFirm = new NpgsqlCommand("query82", conn);
-                cmdFirm.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdFirm.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                NpgsqlDataAdapter daFirm = new NpgsqlDataAdapter(cmdFirm);
-                daFirm.Fill(tableFirm);
-                dataGridView_Firm.DataSource = tableFirm;
-                NpgsqlCommand cmdData = new NpgsqlCommand("query83", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = Convert.ToInt32(comboBox_Firms.SelectedValue);
-                cmdData.Parameters.Add("from", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(from);
-                cmdData.Parameters.Add("to", NpgsqlTypes.NpgsqlDbType.Date).Value = DateTime.Parse(to);
-                timer.Start();
-                NpgsqlDataAdapter daData = new NpgsqlDataAdapter(cmdData);
-                daData.Fill(tableData);
-                dataGridView_Data.DataSource = tableData;
-                timer.Stop();
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-            dataGridView_Firm.Columns["company_name"].HeaderCell.Value = "Компания";
-            dataGridView_Firm.Columns["country_name"].HeaderCell.Value = "Страна";
-            dataGridView_Firm.Columns["head_full_nam"].HeaderCell.Value = "Директор";
-            dataGridView_Firm.Columns["phon"].HeaderCell.Value = "Телефон";
-            dataGridView_Firm.Columns["addres"].HeaderCell.Value = "Адрес";
-            dataGridView_Firm.Columns["bank_detail"].HeaderCell.Value = "Реквизиты";
 
-            dataGridView_Data.Columns["category"].HeaderCell.Value = "Категория";
-            dataGridView_Data.Columns["modell"].HeaderCell.Value = "Модель";
-            dataGridView_Data.Columns["payment_method"].HeaderCell.Value = "Метод оплаты";
-            dataGridView_Data.Columns["summ"].HeaderCell.Value = "Сумма";
+            toolStripStatusLabel_1.Text = resultInfo;
 
-            double time = timer.ElapsedMilliseconds;
-            toolStripStatusLabel.Text = Convert.ToString(tableData.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            ////////////////////////////////////
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", firmID),
+                                                                new Parameter("from", "date", from),
+                                                                new Parameter("to", "date", to)};
+            string result = "";
+            try
+            {
+                result = Class_Helper.ExecuteStoredQuery(conn, queryData, tableData, parameters);
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel_2.Text = result;
         }
 
         private void button_GetWordReport_Click(object sender, EventArgs e)
         {
-            if (dataGridView_Firm.RowCount == 0)
+            string from = label5.Text;
+            string to = label6.Text;
+            string name = label7.Text;
+
+            if (name == "")
             {
-                MessageBox.Show("Пожалуйста, выберите фирму и нажмите просмотр");
+                MessageBox.Show("Пожалуйста, введите данные и нажмите просмотр");
                 return;
             }
             Microsoft.Office.Interop.Word.Application wordApp;
@@ -237,16 +245,6 @@ namespace RIS
             }
 
             wordApp.Visible = true;
-        }
-
-        private void Form_Query_Word_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
-        }
-
-        private void comboBox_Firms_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-
         }
     }
 }

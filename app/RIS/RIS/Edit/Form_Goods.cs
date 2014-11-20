@@ -16,7 +16,28 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
-        private DataTable dataTable_Goods;
+        private string funcCreate = "func_goods_on_insert";
+        private string funcChange = "func_goods_on_update";
+        private string funcDelete = "func_goods_on_delete";
+
+        private DataTable tableGoods;
+        private string queryName = "get_goods_by_server";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
+                                                            new TableColumn("category_id", "int", "category_id"),
+                                                            new TableColumn("category", "text", "Категория"),
+                                                            new TableColumn("company_id", "int", "company_id"),
+                                                            new TableColumn("company", "text", "Компания"),
+                                                            new TableColumn("model", "text", "Модель товара"),
+                                                            new TableColumn("price", "num", "Цена")};
+        private DataTable tableCategories;
+        private string queryCategories = "get_all_categories";
+        List<TableColumn> membersCategories = new List<TableColumn> {new TableColumn("title", "text", "Название"),
+                                                           new TableColumn("id", "int", "ИД")};
+
+        private DataTable tableCompanies;
+        private string queryCompanies = "get_list_companies_by_server";
+        List<TableColumn> membersCompanies = new List<TableColumn> {new TableColumn("name", "text", "Название"),
+                                                           new TableColumn("id", "int", "ИД")};
 
         public Form_Goods(string connStr)
         {
@@ -25,141 +46,84 @@ namespace RIS
 
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+
+            this.tableGoods = new System.Data.DataTable();
+            this.tableCategories = new System.Data.DataTable();
+            this.tableCompanies = new System.Data.DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(tableGoods, dataGridView_Goods, columns);
+                Class_Helper.SetMember(tableCategories, comboBox_Category, membersCategories, "title", "id");
+                Class_Helper.SetMember(tableCompanies, comboBox_Company, membersCompanies, "name", "id");
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
-            }
+                throw new Exception("Can't init datagrid/combobox: " + ex.Message);
+            } 
 
-            this.dataTable_Goods = new DataTable();
-            dataGridView_Goods.AutoGenerateColumns = true;
-            GetCategories();
-            GetCompanies();
-            RefreshData();
-            dataGridView_Goods.DataSource = dataTable_Goods;
-            dataTable_Goods.Columns.Add("category");
-            dataTable_Goods.Columns.Add("company");
             //dataGridView_Categories.Columns["id"].Visible = false;
-            dataGridView_Goods.Columns["id"].HeaderText = "id";
-            dataGridView_Goods.Columns["category_id"].Visible = false;
-            dataGridView_Goods.Columns["company_id"].Visible = false;
-            dataGridView_Goods.Columns["category"].HeaderText = "Категория";
-            dataGridView_Goods.Columns["company"].HeaderText = "Компания";
-            dataGridView_Goods.Columns["model"].HeaderText = "Модель товара";
-            dataGridView_Goods.Columns["price"].HeaderText = "Цена";
-            //dataGridView_Goods.Columns["description"].HeaderText = "Описание товара";
-
-            //SetCategories();
-            //SetCompanies();
-        }
-
-        private void SetCategories()
-        {
-            for (int i = 0; i < dataGridView_Goods.RowCount; i++)
-            {
-                comboBox_Category.SelectedValue = (int)dataGridView_Goods["category_id", i].Value;
-                dataGridView_Goods["category", i].Value = ((System.Data.DataRowView)comboBox_Category.SelectedItem).Row["title"];
-            }
-            comboBox_Category.SelectedIndex = 0;
+            //dataGridView_Goods.Columns["category_id"].Visible = false;
+            //dataGridView_Goods.Columns["company_id"].Visible = false;
         }
 
         private void GetCategories()
         {
-            System.Data.DataTable table = new System.Data.DataTable();
-            string query = "SELECT id, title FROM sb.categories ORDER BY 2; ";
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            Cursor.Current = Cursors.WaitCursor;
+            string result = "";
             try
             {
-                da.Fill(table);
-                comboBox_Category.DataSource = table;
-                comboBox_Category.DisplayMember = "title";
-                comboBox_Category.ValueMember = "id";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryCategories, tableCategories);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void SetCompanies()
-        {
-            for (int i = 0; i < dataGridView_Goods.RowCount; i++)
-            {
-                comboBox_Company.SelectedValue = (int)dataGridView_Goods["company_id", i].Value;
-                dataGridView_Goods["company", i].Value = ((System.Data.DataRowView)comboBox_Company.SelectedItem).Row["name"];
-            }
-            comboBox_Company.SelectedIndex = 0;
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void GetCompanies()
         {
-            System.Data.DataTable table = new System.Data.DataTable();
-            string query = "";
-            switch (comboBox_Server.SelectedIndex)
-            {
-                case 0:
-                    query = "SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "'SELECT sa.companies.id, sa.companies.name FROM sa.companies' ) as companies (id integer, name text) ORDER BY 2; ";
-                    break;
-                case 1:
-                    query = "SELECT sb.companies.id, sb.companies.name FROM sb.companies ORDER BY 2; ";
-                    break;
-            }
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            Cursor.Current = Cursors.WaitCursor;
+            int server_id = comboBox_Server.SelectedIndex;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", server_id) };
+            string result = "";
             try
             {
-                da.Fill(table);
-                comboBox_Company.DataSource = table;
-                comboBox_Company.DisplayMember = "name";
-                comboBox_Company.ValueMember = "id";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryCompanies, tableCompanies, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void RefreshData()
         {
-            dataTable_Goods.Clear();
-            string query = "";
-            switch (comboBox_Server.SelectedIndex)
-            {
-                case 0:
-                    query = "SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "       'SELECT sa.goods_main.id, category_id, company_id, model, price " +
-                            "        FROM sa.goods_main " +
-                            "        JOIN sa.goods_info on sa.goods_main.id = sa.goods_info.id' ) " +
-                            " as goods (id integer, category_id integer, company_id integer, model text, price numeric(12,2)) ORDER BY 1";
-                    break;
-                case 1:
-                    query = "SELECT sb.goods_main.id, category_id, company_id, model, price " +
-                            "FROM sb.goods_main " +
-                            "JOIN sb.goods_info on sb.goods_main.id = sb.goods_info.id ORDER BY 1";
-                    break;
-            }
+            string result = "";
+            Cursor.Current = Cursors.WaitCursor;
+            int server_id = comboBox_Server.SelectedIndex;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", server_id) };
 
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
             try
             {
-                da.Fill(dataTable_Goods);
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, tableGoods, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void Form_Goods_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void dataGridView_Goods_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -217,6 +181,7 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             string model = textBox_Model.Text;
             string price_str = textBox_Price.Text;
             Decimal price = Decimal.Parse(price_str);
@@ -226,27 +191,31 @@ namespace RIS
 
             string details = ""; //richTextBox_Description.Text;
 
+            List<Parameter> parameters = new List<Parameter> { new Parameter("category_id", "int", category_id),
+                                                                new Parameter("company_id", "int", company_id),
+                                                                new Parameter("model", "text", model),
+                                                                new Parameter("price", "num", price),
+                                                                new Parameter("details", "text", details)};
+
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_goods_on_insert", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("category_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = category_id;
-                cmdData.Parameters.Add("company_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = company_id;
-                cmdData.Parameters.Add("model", NpgsqlTypes.NpgsqlDbType.Text).Value = model;
-                cmdData.Parameters.Add("price", NpgsqlTypes.NpgsqlDbType.Numeric).Value = price;
-                cmdData.Parameters.Add("details", NpgsqlTypes.NpgsqlDbType.Text).Value = details;
-
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Товар создан");
-                RefreshData();
-                //SetCategories();
-                //SetCompanies();
+                result = Class_Helper.ExecuteFunction(conn, funcCreate, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on goods insert");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on goods insert";
+                MessageBox.Show(error);
+                return;
             }
-
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Товар создан. " + result;
         }
 
         private void button_Change_Click(object sender, EventArgs e)
@@ -260,6 +229,9 @@ namespace RIS
             {
                 return;
             }
+
+            Cursor.Current = Cursors.WaitCursor;
+
             int goods_id = Convert.ToInt32(label_id.Text);
             string model = textBox_Model.Text;
             string price_str = textBox_Price.Text;
@@ -269,27 +241,32 @@ namespace RIS
             int company_id = (int)comboBox_Company.SelectedValue;
 
             string details = ""; //richTextBox_Description.Text;
+
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", goods_id),
+                                                                new Parameter("category_id", "int", category_id),
+                                                                new Parameter("company_id", "int", company_id),
+                                                                new Parameter("model", "text", model),
+                                                                new Parameter("price", "num", price),
+                                                                new Parameter("details", "text", details)};
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_goods_on_update", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("goods_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = goods_id;
-                cmdData.Parameters.Add("category_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = category_id;
-                cmdData.Parameters.Add("company_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = company_id;
-                cmdData.Parameters.Add("model", NpgsqlTypes.NpgsqlDbType.Text).Value = model;
-                cmdData.Parameters.Add("price", NpgsqlTypes.NpgsqlDbType.Numeric).Value = price;
-                cmdData.Parameters.Add("details", NpgsqlTypes.NpgsqlDbType.Text).Value = details;
-
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Товар изменен");
-                RefreshData();
-                //SetCategories();
-                //SetCompanies();
+                result = Class_Helper.ExecuteFunction(conn, funcChange, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on goods update");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on goods update";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Товар изменен. " + result;
 
         }
 
@@ -308,32 +285,37 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
+
             int goods_id = Convert.ToInt32(label_id.Text);
 
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", goods_id) };
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_goods_on_delete", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = goods_id;
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Товар удален");
-                RefreshData();
-                //SetCategories();
-                //SetCompanies(); ;
+                result = Class_Helper.ExecuteFunction(conn, funcDelete, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on goods delete");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on goods delete";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Товар удален. " + result;
         }
 
-        private void comboBox_Server_SelectionChangeCommitted(object sender, EventArgs e)
+        private void button_Refresh_Click(object sender, EventArgs e)
         {
             GetCategories();
             GetCompanies();
             RefreshData();
-            //SetCategories();
-            //SetCompanies();
         }
     }
 }

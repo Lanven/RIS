@@ -16,7 +16,42 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
-        private DataTable dataTable_Orders;
+        private string funcCreate = "func_orders_on_insert";
+        private string funcChange = "func_orders_on_update";
+        private string funcDelete = "func_orders_on_delete";
+
+        private DataTable tableOrders;
+        private string queryName = "get_orders_by_server";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
+                                                            new TableColumn("goods_id", "int", "goods_id"),
+                                                            new TableColumn("goods", "text", "Товар"),
+                                                            new TableColumn("client_id", "int", "client_id"),
+                                                            new TableColumn("client", "text", "Клиент"),
+                                                            new TableColumn("on_sale_date", "date", "Дата продажи"),
+                                                            new TableColumn("sale_amount", "num", "Сумма"),
+                                                            new TableColumn("payment_method_id", "int", "payment_method_id"),
+                                                            new TableColumn("payment_method", "text", "Способ оплаты"),
+                                                            new TableColumn("sale_type_id", "int", "sale_type_id"),
+                                                            new TableColumn("sale_type", "text", "Вид продажи")};
+        private DataTable tableGoods;
+        private string queryGoods = "get_list_goods_by_server";
+        List<TableColumn> membersGoods = new List<TableColumn> {new TableColumn("model", "text", "Название"),
+                                                           new TableColumn("id", "int", "ИД")};
+
+        private DataTable tableClients;
+        private string queryClients = "get_list_clients";
+        List<TableColumn> membersClients = new List<TableColumn> {new TableColumn("fullname", "text", "ФИО"),
+                                                           new TableColumn("id", "int", "ИД")};
+
+        private DataTable tableSaleTypes;
+        private string querySaleTypes = "get_all_sale_types";
+        List<TableColumn> membersSaleTypes = new List<TableColumn> {new TableColumn("title", "text", "Название"),
+                                                           new TableColumn("id", "int", "ИД")};
+
+        private DataTable tablePaymentMethods;
+        private string queryPaymentMethods = "get_all_payment_methods";
+        List<TableColumn> membersPaymentMethods = new List<TableColumn> {new TableColumn("title", "text", "Название"),
+                                                           new TableColumn("id", "int", "ИД")};
 
         public Form_Orders(string connStr)
         {
@@ -25,212 +60,126 @@ namespace RIS
 
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+
+            this.tableOrders = new System.Data.DataTable();
+            this.tableGoods = new System.Data.DataTable();
+            this.tableClients = new System.Data.DataTable();
+            this.tableSaleTypes = new System.Data.DataTable();
+            this.tablePaymentMethods = new System.Data.DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(tableOrders, dataGridView_Orders, columns);
+                Class_Helper.SetMember(tableGoods, comboBox_Goods, membersGoods, "model", "id");
+                Class_Helper.SetMember(tableClients, comboBox_Client, membersClients, "fullname", "id");
+                Class_Helper.SetMember(tableSaleTypes, comboBox_Sale_Type, membersSaleTypes, "title", "id");
+                Class_Helper.SetMember(tablePaymentMethods, comboBox_Payment_Method, membersPaymentMethods, "title", "id");
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
-            }
-
-            this.dataTable_Orders = new DataTable();
-            dataGridView_Orders.AutoGenerateColumns = true;
-            GetGoods();
-            GetClients();
-            GetPaymentMethods();
-            GetSaleTypes();
-
-            RefreshData();
-            dataGridView_Orders.DataSource = dataTable_Orders;
-            //dataTable_Orders.Columns.Add("goods");
-            //dataTable_Orders.Columns.Add("client");
-            //dataTable_Orders.Columns.Add("payment_method");
-            //dataTable_Orders.Columns.Add("sale_type");
+                throw new Exception("Can't init datagrid/combobox: " + ex.Message);
+            } 
             //dataGridView_Categories.Columns["id"].Visible = false;
-            dataGridView_Orders.Columns["id"].HeaderText = "id";
             //dataGridView_Orders.Columns["goods_id"].Visible = false;
             //dataGridView_Orders.Columns["client_id"].Visible = false;
             //dataGridView_Orders.Columns["payment_method_id"].Visible = false;
             //dataGridView_Orders.Columns["sale_type_id"].Visible = false;
 
-            dataGridView_Orders.Columns["on_sale_date"].HeaderText = "Дата продажи";
-            dataGridView_Orders.Columns["sale_amount"].HeaderText = "Сумма покупки";
-
-            //dataGridView_Orders.Columns["goods"].HeaderText = "Проданный товар";
-            //dataGridView_Orders.Columns["client"].HeaderText = "Покупатель";
-            //dataGridView_Orders.Columns["payment_method"].HeaderText = "Способ оплаты";
-            //dataGridView_Orders.Columns["sale_type"].HeaderText = "Вид продажи";
-            //dataGridView_Goods.Columns["details"].HeaderText = "Дополнительная информация о продаже";
-
-          // SetGoods();
-          // SetClients();
-          //  SetPaymentMethods();
-          //  SetSaleTypes();
-
-        }
-       
-        private void Form_Orders_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
-        }
-
-        private void SetGoods()
-        {
-            for (int i = 0; i < dataGridView_Orders.RowCount; i++)
-            {
-                comboBox_Goods.SelectedValue = (int)dataGridView_Orders["goods_id", i].Value;
-                dataGridView_Orders["goods", i].Value = ((System.Data.DataRowView)comboBox_Goods.SelectedItem).Row["model"];
-            }
-            comboBox_Goods.SelectedIndex = 0;
         }
 
         private void GetGoods()
         {
-            System.Data.DataTable table = new System.Data.DataTable();
-            string query = "";
-            switch (comboBox_Server.SelectedIndex)
-            {
-                case 0:
-                    query = "SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "'SELECT sa.goods_main.id, sa.goods_main.model FROM sa.goods_main' ) as goods (id integer, model text) ORDER BY 2; ";
-                    break;
-                case 1:
-                    query = "SELECT sb.goods_main.id, sb.goods_main.model FROM sb.goods_main ORDER BY 2; ";
-                    break;
-            }
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            Cursor.Current = Cursors.WaitCursor;
+            int server_id = comboBox_Server.SelectedIndex;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", server_id) };
+            string result = "";
             try
             {
-                da.Fill(table);
-                comboBox_Goods.DataSource = table;
-                comboBox_Goods.DisplayMember = "model";
-                comboBox_Goods.ValueMember = "id";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryGoods, tableGoods, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void SetClients()
-        {
-            for (int i = 0; i < dataGridView_Orders.RowCount; i++)
-            {
-                comboBox_Client.SelectedValue = (int)dataGridView_Orders["client_id", i].Value;
-                dataGridView_Orders["client", i].Value = ((System.Data.DataRowView)comboBox_Client.SelectedItem).Row["fio"]; 
-            }
-            comboBox_Client.SelectedIndex = 0;
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void GetClients()
         {
-            System.Data.DataTable table = new System.Data.DataTable();
-            string query = "SELECT id, (surname ||' '|| name||' '||patronymic)as fio FROM sb.clients ORDER BY 2; ";
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            Cursor.Current = Cursors.WaitCursor;
+            string result = "";
             try
             {
-                da.Fill(table);
-                comboBox_Client.DataSource = table;
-                comboBox_Client.DisplayMember = "fio";
-                comboBox_Client.ValueMember = "id";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryClients, tableClients);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void SetPaymentMethods()
-        {
-            for (int i = 0; i < dataGridView_Orders.RowCount; i++)
-            {
-                comboBox_Payment_Method.SelectedValue = (int)dataGridView_Orders["payment_method_id", i].Value;
-                dataGridView_Orders["payment_method", i].Value = ((System.Data.DataRowView)comboBox_Payment_Method.SelectedItem).Row["title"];
-            }
-            comboBox_Payment_Method.SelectedIndex = 0;
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void GetPaymentMethods()
         {
-            System.Data.DataTable table = new System.Data.DataTable();
-            string query = "SELECT id, title FROM sb.payment_methods ORDER BY 2; ";
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            Cursor.Current = Cursors.WaitCursor;
+            string result = "";
             try
             {
-                da.Fill(table);
-                comboBox_Payment_Method.DataSource = table;
-                comboBox_Payment_Method.DisplayMember = "title";
-                comboBox_Payment_Method.ValueMember = "id";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryPaymentMethods, tablePaymentMethods);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void SetSaleTypes()
-        {
-            for (int i = 0; i < dataGridView_Orders.RowCount; i++)
-            {
-                comboBox_Sale_Type.SelectedValue = (int)dataGridView_Orders["sale_type_id", i].Value;
-                dataGridView_Orders["sale_type", i].Value = ((System.Data.DataRowView)comboBox_Sale_Type.SelectedItem).Row["title"];
-            }
-            comboBox_Sale_Type.SelectedIndex = 0;
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void GetSaleTypes()
         {
-            System.Data.DataTable table = new System.Data.DataTable();
-            string query = "SELECT id, title FROM sb.sale_types ORDER BY 2; ";
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            Cursor.Current = Cursors.WaitCursor;
+            string result = "";
             try
             {
-                da.Fill(table);
-                comboBox_Sale_Type.DataSource = table;
-                comboBox_Sale_Type.DisplayMember = "title";
-                comboBox_Sale_Type.ValueMember = "id";
+                result = Class_Helper.ExecuteStoredQuery(conn, querySaleTypes, tableSaleTypes);
             }
-            catch 
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void RefreshData()
         {
-            dataTable_Orders.Clear();
-            string query = "";
-            switch (comboBox_Server.SelectedIndex)
-            {
-                case 0:
-                    query = "SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "       'SELECT sa.orders_main.id, goods_id, client_id, on_sale_date, sale_amount, payment_method_id, sale_type_id " +
-                            "        FROM sa.orders_main' ) " +
-                            " as orders (id integer, goods_id integer, client_id integer, on_sale_date date, sale_amount numeric(12,2), payment_method_id integer, sale_type_id integer) ORDER BY 1";
-                    break;
-                case 1:
-                    query = "SELECT sb.orders_main.id, goods_id, client_id, on_sale_date, sale_amount, payment_method_id, sale_type_id " +
-                            "FROM sb.orders_main " +
-                            "JOIN sb.orders_info on sb.orders_main.id = sb.orders_info.id ORDER BY 1";
-                    break;
-            }
+            string result = "";
+            Cursor.Current = Cursors.WaitCursor;
+            int server_id = comboBox_Server.SelectedIndex;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", server_id) };
 
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
             try
             {
-                da.Fill(dataTable_Orders);
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, tableOrders, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void dataGridView_Orders_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -305,6 +254,7 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             string on_sale_date_str = textBox_On_sale_date.Text;
             string sale_amount_str = textBox_Sale_Amount.Text;
             DateTime on_sale_date = DateTime.Parse(on_sale_date_str);
@@ -317,29 +267,33 @@ namespace RIS
 
             string details = "";
 
+            List<Parameter> parameters = new List<Parameter> { new Parameter("goods_id", "int", goods_id),
+                                                                new Parameter("client_id", "int", client_id),
+                                                                new Parameter("on_sale_date", "date", on_sale_date),
+                                                                new Parameter("sale_amount", "num", sale_amount),
+                                                                new Parameter("payment_method_id", "int", payment_method_id),
+                                                                new Parameter("sale_type_id", "int", sale_type_id),
+                                                                new Parameter("details", "text", details)};
+
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_orders_on_insert", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("goods_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = goods_id;
-                cmdData.Parameters.Add("client_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
-
-                cmdData.Parameters.Add("on_sale_date", NpgsqlTypes.NpgsqlDbType.Date).Value = on_sale_date;
-                cmdData.Parameters.Add("sale_amount", NpgsqlTypes.NpgsqlDbType.Numeric).Value = sale_amount;
-
-                cmdData.Parameters.Add("payment_method_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = payment_method_id;
-                cmdData.Parameters.Add("sale_type_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = sale_type_id;
-                cmdData.Parameters.Add("details", NpgsqlTypes.NpgsqlDbType.Text).Value = details;
-
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Заказ создан");
-                RefreshData();
+                result = Class_Helper.ExecuteFunction(conn, funcCreate, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on orders insert");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on orders insert";
+                MessageBox.Show(error);
+                return;
             }
-
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Заказ создан. " + result;
 
         }
 
@@ -354,6 +308,9 @@ namespace RIS
             {
                 return;
             }
+
+            Cursor.Current = Cursors.WaitCursor;
+
             int order_id = Convert.ToInt32(label_id.Text);
             string on_sale_date_str = textBox_On_sale_date.Text;
             string sale_amount_str = textBox_Sale_Amount.Text;
@@ -366,30 +323,34 @@ namespace RIS
             int sale_type_id = (int)comboBox_Sale_Type.SelectedValue;
 
             string details = "";
+
+            List<Parameter> parameters = new List<Parameter> { new Parameter("order_id", "int", order_id),
+                                                                new Parameter("goods_id", "int", goods_id),
+                                                                new Parameter("client_id", "int", client_id),
+                                                                new Parameter("on_sale_date", "date", on_sale_date),
+                                                                new Parameter("sale_amount", "num", sale_amount),
+                                                                new Parameter("payment_method_id", "int", payment_method_id),
+                                                                new Parameter("sale_type_id", "int", sale_type_id),
+                                                                new Parameter("details", "text", details)};
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_orders_on_update", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("order_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = order_id;
-
-                cmdData.Parameters.Add("goods_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = goods_id;
-                cmdData.Parameters.Add("client_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = client_id;
-
-                cmdData.Parameters.Add("on_sale_date", NpgsqlTypes.NpgsqlDbType.Date).Value = on_sale_date;
-                cmdData.Parameters.Add("sale_amount", NpgsqlTypes.NpgsqlDbType.Numeric).Value = sale_amount;
-
-                cmdData.Parameters.Add("payment_method_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = payment_method_id;
-                cmdData.Parameters.Add("sale_type_id", NpgsqlTypes.NpgsqlDbType.Integer).Value = sale_type_id;
-                cmdData.Parameters.Add("details", NpgsqlTypes.NpgsqlDbType.Text).Value = details;
-
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Заказ изменен");
-                RefreshData();
+                result = Class_Helper.ExecuteFunction(conn, funcChange, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on orders update");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on orders update";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Заказ изменен. " + result;
 
         }
 
@@ -401,35 +362,39 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
+
             int order_id = Convert.ToInt32(label_id.Text);
 
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", order_id) };
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_orders_on_delete", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = order_id;
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Заказ удален");
-                RefreshData();
+                result = Class_Helper.ExecuteFunction(conn, funcDelete, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on orders delete");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on orders delete";
+                MessageBox.Show(error);
+                return;
             }
-
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Заказ удален. " + result;
         }
 
-        private void comboBox_Server_SelectionChangeCommitted(object sender, EventArgs e)
+        private void button_Refresh_Click(object sender, EventArgs e)
         {
             GetGoods();
             GetClients();
             GetPaymentMethods();
             GetSaleTypes();
             RefreshData();
-            //SetGoods();
-            //SetClients();
-            //SetPaymentMethods();
-            //SetSaleTypes();
         }
 
     }

@@ -28,7 +28,6 @@ namespace RIS
             this.Hide();
             show = false;
             beforeEnter();
-            label1.Text += Convert.ToString(Add(5, 23));
         }
 
         private void Form_Main_Shown(object sender, EventArgs e)
@@ -99,88 +98,192 @@ namespace RIS
 
         private void запрос2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_2 QueryForm = new Form_Query_2(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_2 QueryForm = new Form_Query_2(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void запрос3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_3 QueryForm = new Form_Query_3(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_3 QueryForm = new Form_Query_3(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         
         private void запрос4ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_4 QueryForm = new Form_Query_4(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_4 QueryForm = new Form_Query_4(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void запрос5ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_5 QueryForm = new Form_Query_5(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_5 QueryForm = new Form_Query_5(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         
         private void запрос6ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_6 QueryForm = new Form_Query_6(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_6 QueryForm = new Form_Query_6(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void запрос7ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_7 QueryForm = new Form_Query_7(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_7 QueryForm = new Form_Query_7(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void wordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_Word QueryForm = new Form_Query_Word(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_Word QueryForm = new Form_Query_Word(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void excelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Query_Excel QueryForm = new Form_Query_Excel(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Query_Excel QueryForm = new Form_Query_Excel(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void категорииToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Categories QueryForm = new Form_Categories(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Categories QueryForm = new Form_Categories(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void страныToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Countries QueryForm = new Form_Countries(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Countries QueryForm = new Form_Countries(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void клиентыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Clients QueryForm = new Form_Clients(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Clients QueryForm = new Form_Clients(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void компанииToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Companies QueryForm = new Form_Companies(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Companies QueryForm = new Form_Companies(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void товарыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Goods QueryForm = new Form_Goods(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Goods QueryForm = new Form_Goods(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void заказыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form_Orders QueryForm = new Form_Orders(connStr);
-            QueryForm.Show();
+            try
+            {
+                Form_Orders QueryForm = new Form_Orders(connStr);
+                QueryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int a = (int)numericUpDown1.Value;
+            int b = (int)numericUpDown2.Value;
 
+            textBox1.Text = Convert.ToString(Add(a, b));
+        }
     }
 }

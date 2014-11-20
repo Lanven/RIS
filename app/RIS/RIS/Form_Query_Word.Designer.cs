@@ -32,16 +32,20 @@
             this.comboBox_Firms = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox_From = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox_To = new System.Windows.Forms.TextBox();
             this.button_GetLook = new System.Windows.Forms.Button();
             this.button_GetWordReport = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataGridView_Data = new System.Windows.Forms.DataGridView();
             this.button_GetFirmList = new System.Windows.Forms.Button();
             this.dataGridView_Firm = new System.Windows.Forms.DataGridView();
+            this.maskedTextBox_From = new System.Windows.Forms.MaskedTextBox();
+            this.maskedTextBox_To = new System.Windows.Forms.MaskedTextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.toolStripStatusLabel_2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Data)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Firm)).BeginInit();
@@ -68,7 +72,6 @@
             this.comboBox_Firms.Name = "comboBox_Firms";
             this.comboBox_Firms.Size = new System.Drawing.Size(346, 21);
             this.comboBox_Firms.TabIndex = 1;
-            this.comboBox_Firms.SelectionChangeCommitted += new System.EventHandler(this.comboBox_Firms_SelectionChangeCommitted);
             // 
             // label2
             // 
@@ -88,14 +91,6 @@
             this.label3.TabIndex = 3;
             this.label3.Text = "Период времени: с";
             // 
-            // textBox_From
-            // 
-            this.textBox_From.Location = new System.Drawing.Point(122, 94);
-            this.textBox_From.Name = "textBox_From";
-            this.textBox_From.Size = new System.Drawing.Size(123, 20);
-            this.textBox_From.TabIndex = 4;
-            this.textBox_From.Text = "2014-01-01";
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -104,14 +99,6 @@
             this.label4.Size = new System.Drawing.Size(19, 13);
             this.label4.TabIndex = 5;
             this.label4.Text = "по";
-            // 
-            // textBox_To
-            // 
-            this.textBox_To.Location = new System.Drawing.Point(276, 94);
-            this.textBox_To.Name = "textBox_To";
-            this.textBox_To.Size = new System.Drawing.Size(135, 20);
-            this.textBox_To.TabIndex = 6;
-            this.textBox_To.Text = "2014-12-31";
             // 
             // button_GetLook
             // 
@@ -137,17 +124,17 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel});
+            this.toolStripStatusLabel_1,
+            this.toolStripStatusLabel_2});
             this.statusStrip1.Location = new System.Drawing.Point(0, 411);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(693, 22);
             this.statusStrip1.TabIndex = 9;
-            this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel
+            // toolStripStatusLabel_1
             // 
-            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
-            this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
+            this.toolStripStatusLabel_1.Name = "toolStripStatusLabel_1";
+            this.toolStripStatusLabel_1.Size = new System.Drawing.Size(0, 17);
             // 
             // dataGridView_Data
             // 
@@ -190,27 +177,79 @@
             this.dataGridView_Firm.Size = new System.Drawing.Size(665, 67);
             this.dataGridView_Firm.TabIndex = 12;
             // 
+            // maskedTextBox_From
+            // 
+            this.maskedTextBox_From.Location = new System.Drawing.Point(135, 94);
+            this.maskedTextBox_From.Mask = "0000-00-00";
+            this.maskedTextBox_From.Name = "maskedTextBox_From";
+            this.maskedTextBox_From.Size = new System.Drawing.Size(100, 20);
+            this.maskedTextBox_From.TabIndex = 13;
+            this.maskedTextBox_From.Text = "20140101";
+            // 
+            // maskedTextBox_To
+            // 
+            this.maskedTextBox_To.Location = new System.Drawing.Point(289, 94);
+            this.maskedTextBox_To.Mask = "0000-00-00";
+            this.maskedTextBox_To.Name = "maskedTextBox_To";
+            this.maskedTextBox_To.Size = new System.Drawing.Size(100, 20);
+            this.maskedTextBox_To.TabIndex = 14;
+            this.maskedTextBox_To.Text = "20141231";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(566, 60);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(0, 13);
+            this.label5.TabIndex = 15;
+            this.label5.Visible = false;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(566, 73);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(0, 13);
+            this.label6.TabIndex = 16;
+            this.label6.Visible = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(566, 86);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(0, 13);
+            this.label7.TabIndex = 17;
+            this.label7.Visible = false;
+            // 
+            // toolStripStatusLabel_2
+            // 
+            this.toolStripStatusLabel_2.Name = "toolStripStatusLabel_2";
+            this.toolStripStatusLabel_2.Size = new System.Drawing.Size(0, 17);
+            // 
             // Form_Query_Word
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(693, 433);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.maskedTextBox_To);
+            this.Controls.Add(this.maskedTextBox_From);
             this.Controls.Add(this.dataGridView_Firm);
             this.Controls.Add(this.button_GetFirmList);
             this.Controls.Add(this.dataGridView_Data);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button_GetWordReport);
             this.Controls.Add(this.button_GetLook);
-            this.Controls.Add(this.textBox_To);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox_From);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboBox_Firms);
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_Word";
             this.Text = "Формирование Word-отчета";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_Word_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Data)).EndInit();
@@ -226,15 +265,19 @@
         private System.Windows.Forms.ComboBox comboBox_Firms;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox_From;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox_To;
         private System.Windows.Forms.Button button_GetLook;
         private System.Windows.Forms.Button button_GetWordReport;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.DataGridView dataGridView_Data;
         private System.Windows.Forms.Button button_GetFirmList;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_1;
         private System.Windows.Forms.DataGridView dataGridView_Firm;
+        private System.Windows.Forms.MaskedTextBox maskedTextBox_From;
+        private System.Windows.Forms.MaskedTextBox maskedTextBox_To;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_2;
     }
 }

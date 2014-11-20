@@ -20,15 +20,15 @@ INSERT INTO sb.clients VALUES (p_id,
 			p_passport_series,p_passport_number,
 			p_issue_date,p_issue_department);
 			
-perform dblink_connect ('dbname=risbd6 host=students.ami.nstu.ru 
-			port=5432 user=risbd6 password=ris14bd6');
+perform dblink_connect ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6');
 perform dblink_exec ('INSERT INTO sa.clients VALUES ('||p_id||',
 			'''||p_surname||''','''||p_name||''',
 			'''||p_patronymic||''','''||p_birthdate||''',
 			'''||p_phone||''','''||p_email||''','''||p_address||''');');
 
 perform dblink_disconnect();
-
+EXCEPTION WHEN unique_violation THEN
+raise exception 'Client already exists';
 return;
 END
 $$ LANGUAGE plpgsql;
@@ -58,7 +58,8 @@ perform dblink_exec ('UPDATE sa.clients SET
 			WHERE id='||p_id||';');
 
 perform dblink_disconnect();
-
+EXCEPTION WHEN unique_violation THEN
+raise exception 'Client already exists';
 return;
 END
 $$ LANGUAGE plpgsql;

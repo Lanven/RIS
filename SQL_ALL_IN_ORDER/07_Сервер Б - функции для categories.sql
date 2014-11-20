@@ -8,7 +8,9 @@ perform dblink_connect ('dbname=risbd6 host=students.ami.nstu.ru
 			port=5432 user=risbd6 password=ris14bd6');
 perform dblink_exec ('INSERT INTO sa.categories VALUES ('||p_id||','''||p_title||''');');
 perform dblink_disconnect();
-return;
+RETURN;
+EXCEPTION WHEN unique_violation THEN
+raise exception 'Category already exists';
 END
 $$ LANGUAGE plpgsql;
 
@@ -22,7 +24,9 @@ perform dblink_connect ('dbname=risbd6 host=students.ami.nstu.ru
 perform dblink_exec ('UPDATE sa.categories SET title='''||p_title||''' WHERE id='||p_id||';');
 
 perform dblink_disconnect();
-return;
+RETURN;
+EXCEPTION WHEN unique_violation THEN
+raise exception 'Category already exists';
 END
 $$ LANGUAGE plpgsql;
 
@@ -35,6 +39,6 @@ perform dblink_connect ('dbname=risbd6 host=students.ami.nstu.ru
 perform dblink_exec ('DELETE FROM sa.categories  WHERE id='||p_id||';');
 
 perform dblink_disconnect();
-return;
+RETURN;
 END
 $$ LANGUAGE plpgsql;

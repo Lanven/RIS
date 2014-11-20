@@ -16,60 +16,61 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
+        private DataTable table;
+        private string queryName = "get_all_countries";
+        private string funcCreate = "func_countries_on_insert";
+        private string funcChange = "func_countries_on_update";
+        private string funcDelete = "func_countries_on_delete";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
+                                                            new TableColumn("name", "text", "Название")};
 
         public Form_Countries(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.table = new DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(table, dataGridView_Countries, columns);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
+                throw new Exception("Can't init datagrid: " + ex.Message);
             }
-            dataGridView_Countries.AutoGenerateColumns = true;
 
-            RefreshData();
-            //dataGridView_Categories.Columns["id"].Visible = false;
-            dataGridView_Countries.Columns["id"].HeaderText = "id";
-            //dataGridView_Categories.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-            dataGridView_Countries.Columns["name"].HeaderText = "Название";
-
-            string query = "SELECT id from sb.countries";
-            NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-            label_ServerB.Text = ((int)cmd.ExecuteScalar()).ToString();
+            try
+            {
+                string query = "SELECT id from sb.countries";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+                conn.Open();
+                label_ServerB.Text = ((int)cmd.ExecuteScalar()).ToString();
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                conn.Close();
+                throw new Exception("Can't connect to B: " + ex.Message);
+            }
         }
 
         private void RefreshData()
         {
-            DataTable table = new DataTable();
-            
-            string query = "SELECT id, name FROM ( " +
-                            "    SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "        'SELECT sa.countries.id, sa.countries.name " +
-                            "        FROM sa.countries' ) as companies (id integer, name text) " +
-                            "    UNION " +
-                            "    SELECT sb.countries.id, sb.countries.name " +
-                            "    FROM sb.countries) a " +
-                            "ORDER BY 2; ";
-
-            //string query = "SELECT id, name from sb.countries";
-
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            string result = "";
+            Cursor.Current = Cursors.WaitCursor;
             try
             {
-                da.Fill(table);
-                dataGridView_Countries.DataSource = table;
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, table);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private bool IsEveryFieldCorrect()
@@ -90,41 +91,30 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             string name = textBox_Name.Text;
 
-            string tmp = "SELECT count(*) FROM ( " +
-                            "    SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "        'SELECT sa.countries.id, sa.countries.name " +
-                            "        FROM sa.countries' ) as countries (id integer, name text) " +
-                            "    UNION " +
-                            "    SELECT sb.countries.id, sb.countries.name " +
-                            "    FROM sb.countries) a " +
-                            " WHERE name LIKE :name";
-            
-            //string tmp = "select count(*) from sb.countries a where a.name LIKE :name";
-            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
-            tmpcmd.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("name", "text", name) };
 
-            if ((long)tmpcmd.ExecuteScalar() == 0)
+            string result = "";
+            try
             {
-                try
-                {
-                    var cmdData = new Npgsql.NpgsqlCommand("func_countries_on_insert", conn);
-                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                    cmdData.ExecuteNonQuery();
-                    MessageBox.Show("Страна создана");
-                    RefreshData();
-                }
-                catch
-                {
-                    MessageBox.Show("Smth wrong on country insert");
-                }
+                result = Class_Helper.ExecuteFunction(conn, funcCreate, parameters);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Страна с таким названием уже существует");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "P0001")
+                        error = "Страна уже существует";
+                    else
+                        error = "Smth wrong on country insert";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Страна создана. " + result;
         }
 
         private void button_Change_Click(object sender, EventArgs e)
@@ -144,43 +134,33 @@ namespace RIS
             {
                 return;
             }
+
+            Cursor.Current = Cursors.WaitCursor;
+
             string name = textBox_Name.Text;
             int country_id = Convert.ToInt32(label_id.Text);
-            
-            string tmp = "SELECT count(*) FROM ( " +
-                            "    SELECT * FROM public.dblink ('dbname=risbd6 host=students.ami.nstu.ru port=5432 user=risbd6 password=ris14bd6', " +
-                            "        'SELECT sa.countries.id, sa.countries.name " +
-                            "        FROM sa.countries' ) as countries (id integer, name text) " +
-                            "    UNION " +
-                            "    SELECT sb.countries.id, sb.countries.name " +
-                            "    FROM sb.countries) a " +
-                            " WHERE name LIKE :name";
-            //string tmp = "select count(*) from sb.categories a where a.title LIKE :name AND a.id <> :id";
-            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
-            tmpcmd.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
 
-            if ((long)tmpcmd.ExecuteScalar() == 0)
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", country_id),
+                                                               new Parameter("name", "text", name)};
+            string result = "";
+            try
             {
-                try
-                {
-                    var cmdData = new Npgsql.NpgsqlCommand("func_countries_on_update", conn);
-                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
-                    cmdData.Parameters.Add("name", NpgsqlTypes.NpgsqlDbType.Text).Value = name;
-                    cmdData.ExecuteNonQuery();
-                    MessageBox.Show("Страна изменена");
-                    RefreshData();
-                }
-                catch
-                {
-                    MessageBox.Show("Smth wrong on country update");
-                }
+                result = Class_Helper.ExecuteFunction(conn, funcChange, parameters);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Страна с таким названием уже существует");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "P0001")
+                        error = "Страна уже существует";
+                    else
+                        error = "Smth wrong on country update";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Страна изменена. " + result;
         }
 
         private void button_Delete_Click(object sender, EventArgs e)
@@ -196,38 +176,31 @@ namespace RIS
                 MessageBox.Show("Нельзя удалить");
                 return;
             }
-            
+
+            Cursor.Current = Cursors.WaitCursor;
+
             int country_id = Convert.ToInt32(label_id.Text);
-            
-            NpgsqlCommand tmpcmd = new NpgsqlCommand("func_search_companies_by_country", conn);
-            tmpcmd.CommandType = System.Data.CommandType.StoredProcedure;
-            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
 
-            if ((int)tmpcmd.ExecuteScalar() == 0)
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", country_id) };
+            string result = "";
+            try
             {
-                try
-                {
-                    var cmdData = new Npgsql.NpgsqlCommand("func_countries_on_delete", conn);
-                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = country_id;
-                    cmdData.ExecuteNonQuery();
-                    MessageBox.Show("Страна удалена");
-                    RefreshData();
-                }
-                catch
-                {
-                    MessageBox.Show("Smth wrong on country delete");
-                }
+                result = Class_Helper.ExecuteFunction(conn, funcDelete, parameters);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Невозможно удалить страну - есть связанные данные");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "P0001")
+                        error = "Невозможно удалить страну - есть связанные данные";
+                    else
+                        error = "Smth wrong on country delete";
+                MessageBox.Show(error);
+                return;
             }
-        }
-
-        private void Form_Countries_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Страна удалена. " + result;
         }
 
         private void dataGridView_Countries_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -242,12 +215,13 @@ namespace RIS
                     dataGridView_Countries.Rows[row].Selected = true;
                     textBox_Name.Text = (string)dataGridView_Countries["name", row].Value;
                     label_id.Text = ((int)dataGridView_Countries["id", row].Value).ToString();
-                    // IDBook = (int)dataGridView1["inventory_number", e.RowIndex].Value;
-                    // Get mouse position relative to the vehicles grid
-                    //var relativeMousePosition = dataGridView1.PointToClient(Cursor.Position);
-
                 }
             }
+        }
+
+        private void button_Refresh_Click(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     }
 }

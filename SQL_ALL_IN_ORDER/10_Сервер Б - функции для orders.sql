@@ -5,11 +5,11 @@
   
 DECLARE
 p_id integer;
-month integer;
+p_month integer;
 
 BEGIN
 p_id = nextval('sb.orders_id_seq');
-month = EXTRACT (MONTH FROM p_on_sale_date);
+p_month = EXTRACT (MONTH FROM p_on_sale_date);
 
 if (SELECT count(*) from sb.goods_main WHERE sb.goods_main.id = p_goods_id)=0
     
@@ -20,7 +20,7 @@ perform dblink_connect ('dbname=risbd6 host=students.ami.nstu.ru
 perform dblink_exec ('INSERT INTO sa.orders_main VALUES ('||p_id||',
 			'||p_goods_id||', '||p_client_id||',
 			'''||p_on_sale_date||''', '''||p_sale_amount||''',
-			'||p_payment_method_id||', '||p_sale_type_id||', '||month||');');
+			'||p_payment_method_id||', '||p_sale_type_id||', '||p_month||');');
 			
 perform dblink_exec ('INSERT INTO sa.orders_info VALUES ('||p_id||',
 			'''||p_details||''');');
@@ -28,7 +28,7 @@ perform dblink_exec ('INSERT INTO sa.orders_info VALUES ('||p_id||',
 perform dblink_disconnect();
 
 else 
-INSERT INTO sb.orders_main VALUES (p_id, p_goods_id, p_client_id, p_on_sale_date, p_sale_amount, p_payment_method_id, month);
+INSERT INTO sb.orders_main VALUES (p_id, p_goods_id, p_client_id, p_on_sale_date, p_sale_amount, p_payment_method_id, p_month);
 INSERT INTO sb.orders_info VALUES (p_id, p_sale_type_id, p_details);
 
 end if;
@@ -42,9 +42,9 @@ CREATE OR REPLACE FUNCTION func_orders_on_update(p_id integer, p_goods_id intege
 							      p_payment_method_id integer, p_sale_type_id integer, 
 							      p_details text) RETURNS void AS $$
 DECLARE
-month integer;
+p_month integer;
 BEGIN
-month = EXTRACT (MONTH FROM p_on_sale_date);
+p_month = EXTRACT (MONTH FROM p_on_sale_date);
 
 if (SELECT count(*) from sb.orders_main WHERE id = p_id)=0
     

@@ -16,51 +16,49 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
+        private DataTable table;
+        private string queryName = "get_all_categories";
+        private string funcCreate = "func_categories_on_insert";
+        private string funcChange = "func_categories_on_update";
+        private string funcDelete = "func_categories_on_delete";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
+                                                            new TableColumn("title", "text", "Название")};
 
         public Form_Categories(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.table = new DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(table, dataGridView_Categories, columns);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
+                throw new Exception("Can't init datagrid: " + ex.Message);
             }
-            dataGridView_Categories.AutoGenerateColumns = true;
-
-            RefreshData();
             //dataGridView_Categories.Columns["id"].Visible = false;
-            dataGridView_Categories.Columns["id"].HeaderText = "id";
             //dataGridView_Categories.Columns["id"].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-            dataGridView_Categories.Columns["title"].HeaderText = "Название";
         }
 
         private void RefreshData()
         {
-            DataTable table = new DataTable();
-            string query = "SELECT id, title from sb.categories";
-
-            NpgsqlCommand command = new NpgsqlCommand(query, conn);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
+            string result = "";
+            Cursor.Current = Cursors.WaitCursor;
             try
             {
-                da.Fill(table);
-                dataGridView_Categories.DataSource = table;
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, table);
             }
-            catch 
+            catch (Exception ex)
             {
-                MessageBox.Show("Cannot perform getting data");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void Form_Categories_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
 
         private void dataGridView_Categories_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -72,14 +70,9 @@ namespace RIS
                     int row = e.RowIndex;
                     int column = e.ColumnIndex;
                     DataGridViewCell clickedCell = (sender as DataGridView).Rows[row].Cells[column];
-                    //dataGridView1.CurrentCell = clickedCell;
                     dataGridView_Categories.Rows[row].Selected = true;
                     textBox_Title.Text = (string)dataGridView_Categories["title", row].Value;
                     label_id.Text = ((int)dataGridView_Categories["id", row].Value).ToString();
-                    // IDBook = (int)dataGridView1["inventory_number", e.RowIndex].Value;
-                    // Get mouse position relative to the vehicles grid
-                    //var relativeMousePosition = dataGridView1.PointToClient(Cursor.Position);
-
                 }
             }
         }
@@ -102,32 +95,30 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
             string title = textBox_Title.Text;
 
-            string tmp = "select count(*) from sb.categories a where a.title LIKE :title";
-            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
-            tmpcmd.Parameters.Add("title", NpgsqlTypes.NpgsqlDbType.Text).Value = title;
+            List<Parameter> parameters = new List<Parameter> { new Parameter("title", "text", title) };
 
-            if ((long)tmpcmd.ExecuteScalar() == 0)
+            string result = "";
+            try
             {
-                try
-                {
-                    var cmdData = new Npgsql.NpgsqlCommand("func_categories_on_insert", conn);
-                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmdData.Parameters.Add("title", NpgsqlTypes.NpgsqlDbType.Text).Value = title;
-                    cmdData.ExecuteNonQuery();
-                    MessageBox.Show("Категория создана");
-                    RefreshData();
-                }
-                catch
-                {
-                    MessageBox.Show("Smth wrong on category insert");
-                }
+                result = Class_Helper.ExecuteFunction(conn, funcCreate, parameters);
             }
-            else 
+            catch (Exception ex)
             {
-                MessageBox.Show("Категория с таким названием уже существует");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "P0001")
+                        error = "Категория уже существует";
+                    else
+                        error = "Smth wrong on category insert";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Категория создана. " + result;
         }
 
         private void button_Change_Click(object sender, EventArgs e)
@@ -141,36 +132,33 @@ namespace RIS
             {
                 return;
             }
-            string title = textBox_Title.Text;
 
+            Cursor.Current = Cursors.WaitCursor;
+
+            string title = textBox_Title.Text;
             int category_id = Convert.ToInt32(label_id.Text);
 
-            string tmp = "select count(*) from sb.categories a where a.title LIKE :title AND a.id <> :id";
-            NpgsqlCommand tmpcmd = new NpgsqlCommand(tmp, conn);
-            tmpcmd.Parameters.Add("title", NpgsqlTypes.NpgsqlDbType.Text).Value = title;
-            tmpcmd.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = category_id;
-
-            if ((long)tmpcmd.ExecuteScalar() == 0)
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", category_id),
+                                                               new Parameter("title", "text", title)};
+            string result = "";
+            try
             {
-                try
-                {
-                    var cmdData = new Npgsql.NpgsqlCommand("func_categories_on_update", conn);
-                    cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = category_id;
-                    cmdData.Parameters.Add("title", NpgsqlTypes.NpgsqlDbType.Text).Value = title;
-                    cmdData.ExecuteNonQuery();
-                    MessageBox.Show("Категория изменена");
-                    RefreshData();
-                }
-                catch
-                {
-                    MessageBox.Show("Smth wrong on category update");
-                }
+                result = Class_Helper.ExecuteFunction(conn, funcChange, parameters);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Категория с таким названием уже существует");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "P0001")
+                        error = "Категория уже существует";
+                    else
+                        error = "Smth wrong on category update";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Категория изменена. " + result;
         }
 
         private void button_Delete_Click(object sender, EventArgs e)
@@ -188,21 +176,35 @@ namespace RIS
                 return;
             }
 
+            Cursor.Current = Cursors.WaitCursor;
+
             int category_id = Convert.ToInt32(label_id.Text);
-           
+
+            List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", category_id)};
+            string result = "";
             try
             {
-                var cmdData = new Npgsql.NpgsqlCommand("func_categories_on_delete", conn);
-                cmdData.CommandType = System.Data.CommandType.StoredProcedure;
-                cmdData.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Integer).Value = category_id;
-                cmdData.ExecuteNonQuery();
-                MessageBox.Show("Категория удалена");
-                RefreshData();
+                result = Class_Helper.ExecuteFunction(conn, funcDelete, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong on category delete");
+                Cursor.Current = Cursors.Default;
+                string error = "";
+                //if (ex.Source == "Npgsql")
+                //    if (((NpgsqlException)ex).Code == "P0001")
+                //        error = "Категория уже существует";
+                //    else
+                error = "Smth wrong on category delete";
+                MessageBox.Show(error);
+                return;
             }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = "Категория удалена. " + result;
+        }
+
+        private void button_Refresh_Click(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     }
 }

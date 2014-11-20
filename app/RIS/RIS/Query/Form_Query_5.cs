@@ -16,58 +16,49 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
+        private DataTable table;
+        private string queryName = "query05";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("company", "date", "Компания"),
+                                                            new TableColumn("country", "text", "Страна"),
+                                                            new TableColumn("summ", "num", "Сумма продажи")};
 
         public Form_Query_5(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.table = new DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(table, dataGridView_Firms, columns);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
+                throw new Exception("Can't init datagrid: " + ex.Message);
             }
-
-            dataGridView_Firms.AutoGenerateColumns = true;
         }
 
         private void button_Get_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+            int month = (int)numericUpDown_Month.Value;
+
+            List<Parameter> parameters = new List<Parameter> { new Parameter("month", "int", month) };
+
+            string result = "";
             try
             {
-                Stopwatch timer = new Stopwatch();
-
-                int month = (int)numericUpDown_Month.Value;
-                DataTable table = new DataTable();
-                NpgsqlCommand command = new NpgsqlCommand("query05", conn);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.Parameters.Add("month", NpgsqlTypes.NpgsqlDbType.Integer).Value = month;
-                timer.Start();
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-                da.Fill(table);
-                timer.Stop();
-                dataGridView_Firms.DataSource = table;
-
-                dataGridView_Firms.Columns["company"].HeaderCell.Value = "Компания";
-                dataGridView_Firms.Columns["country"].HeaderCell.Value = "Страна";
-                dataGridView_Firms.Columns["summ"].HeaderCell.Value = "Сумма продажи";
-
-                double time = timer.ElapsedMilliseconds;
-                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, table, parameters);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Smth wrong during query 5");
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void Form_Query_5_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            this.conn.Close();
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
     }
 }

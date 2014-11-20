@@ -32,9 +32,7 @@
             this.dataGridView_Data = new System.Windows.Forms.DataGridView();
             this.button_GetExcelReport = new System.Windows.Forms.Button();
             this.button_GetLook = new System.Windows.Forms.Button();
-            this.textBox_To = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox_From = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBox_Firms = new System.Windows.Forms.ComboBox();
@@ -44,6 +42,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.maskedTextBox_From = new System.Windows.Forms.MaskedTextBox();
+            this.maskedTextBox_To = new System.Windows.Forms.MaskedTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Data)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -95,14 +95,6 @@
             this.button_GetLook.UseVisualStyleBackColor = true;
             this.button_GetLook.Click += new System.EventHandler(this.button_GetLook_Click);
             // 
-            // textBox_To
-            // 
-            this.textBox_To.Location = new System.Drawing.Point(276, 94);
-            this.textBox_To.Name = "textBox_To";
-            this.textBox_To.Size = new System.Drawing.Size(135, 20);
-            this.textBox_To.TabIndex = 19;
-            this.textBox_To.Text = "2014-12-31";
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -111,14 +103,6 @@
             this.label4.Size = new System.Drawing.Size(19, 13);
             this.label4.TabIndex = 18;
             this.label4.Text = "по";
-            // 
-            // textBox_From
-            // 
-            this.textBox_From.Location = new System.Drawing.Point(122, 94);
-            this.textBox_From.Name = "textBox_From";
-            this.textBox_From.Size = new System.Drawing.Size(123, 20);
-            this.textBox_From.TabIndex = 17;
-            this.textBox_From.Text = "2014-01-01";
             // 
             // label3
             // 
@@ -148,7 +132,6 @@
             this.comboBox_Firms.Name = "comboBox_Firms";
             this.comboBox_Firms.Size = new System.Drawing.Size(346, 21);
             this.comboBox_Firms.TabIndex = 14;
-            this.comboBox_Firms.SelectionChangeCommitted += new System.EventHandler(this.comboBox_Firms_SelectionChangeCommitted);
             // 
             // label1
             // 
@@ -203,11 +186,31 @@
             this.label7.TabIndex = 28;
             this.label7.Visible = false;
             // 
+            // maskedTextBox_From
+            // 
+            this.maskedTextBox_From.Location = new System.Drawing.Point(135, 94);
+            this.maskedTextBox_From.Mask = "0000-00-00";
+            this.maskedTextBox_From.Name = "maskedTextBox_From";
+            this.maskedTextBox_From.Size = new System.Drawing.Size(100, 20);
+            this.maskedTextBox_From.TabIndex = 29;
+            this.maskedTextBox_From.Text = "20140101";
+            // 
+            // maskedTextBox_To
+            // 
+            this.maskedTextBox_To.Location = new System.Drawing.Point(289, 94);
+            this.maskedTextBox_To.Mask = "0000-00-00";
+            this.maskedTextBox_To.Name = "maskedTextBox_To";
+            this.maskedTextBox_To.Size = new System.Drawing.Size(100, 20);
+            this.maskedTextBox_To.TabIndex = 30;
+            this.maskedTextBox_To.Text = "20141231";
+            // 
             // Form_Query_Excel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(703, 530);
+            this.Controls.Add(this.maskedTextBox_To);
+            this.Controls.Add(this.maskedTextBox_From);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -216,16 +219,13 @@
             this.Controls.Add(this.dataGridView_Data);
             this.Controls.Add(this.button_GetExcelReport);
             this.Controls.Add(this.button_GetLook);
-            this.Controls.Add(this.textBox_To);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox_From);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboBox_Firms);
             this.Controls.Add(this.label1);
             this.Name = "Form_Query_Excel";
             this.Text = "Формирование Excel-отчета";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Query_Excel_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Data)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -240,9 +240,7 @@
         private System.Windows.Forms.DataGridView dataGridView_Data;
         private System.Windows.Forms.Button button_GetExcelReport;
         private System.Windows.Forms.Button button_GetLook;
-        private System.Windows.Forms.TextBox textBox_To;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox_From;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboBox_Firms;
@@ -252,5 +250,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.MaskedTextBox maskedTextBox_From;
+        private System.Windows.Forms.MaskedTextBox maskedTextBox_To;
     }
 }

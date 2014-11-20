@@ -16,60 +16,50 @@ namespace RIS
     {
         private string connStr;
         private NpgsqlConnection conn;
+        private DataTable table;
+        private string queryName = "query07";
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("surnam", "text", "Фамилия"),
+                                                            new TableColumn("nam", "text", "Имя"),
+                                                            new TableColumn("patronymi", "text", "Отчество"),
+                                                            new TableColumn("birthdat", "date", "Дата рождения"),
+                                                            new TableColumn("passport_serie", "text", "Серия паспорта"),
+                                                            new TableColumn("passport_numbe", "text", "Номер паспорта"),
+                                                            new TableColumn("issue_dat", "date", "Дата выдачи"),
+                                                            new TableColumn("issue_departmen", "text", "Отделение выдачи")};
 
         public Form_Query_7(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            this.table = new DataTable();
+
             try
             {
-                conn.Open();
+                Class_Helper.SetColumns(table, dataGridView_Clients, columns);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something wrong with connection");
-                this.Close();
+                throw new Exception("Can't init datagrid: " + ex.Message);
             }
-
-            dataGridView_Clients.AutoGenerateColumns = true;
         }
 
         private void button_Get_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+            string result = "";
             try
-            { 
-                Stopwatch timer = new Stopwatch();
-                DataTable table = new DataTable();
-
-                NpgsqlCommand command = new NpgsqlCommand("query07", conn);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                timer.Start();
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(command);
-                da.Fill(table);
-                timer.Stop();
-                dataGridView_Clients.DataSource = table;
-                dataGridView_Clients.Columns["surnam"].HeaderCell.Value = "Фамилия";
-                dataGridView_Clients.Columns["nam"].HeaderCell.Value = "Имя";
-                dataGridView_Clients.Columns["patronymi"].HeaderCell.Value = "Отчество";
-                dataGridView_Clients.Columns["birthdat"].HeaderCell.Value = "Дата рождения";
-                dataGridView_Clients.Columns["passport_serie"].HeaderCell.Value = "Серия паспорта";
-                dataGridView_Clients.Columns["passport_numbe"].HeaderCell.Value = "Номер паспорта";
-                dataGridView_Clients.Columns["issue_dat"].HeaderCell.Value = "Дата выдачи";
-                dataGridView_Clients.Columns["issue_departmen"].HeaderCell.Value = "Отделение выдачи";
-
-                double time = timer.ElapsedMilliseconds;
-                toolStripStatusLabel.Text = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
-            }
-            catch
             {
-                MessageBox.Show("Smth wrong during query 7");
+                result = Class_Helper.ExecuteStoredQuery(conn, queryName, table);
             }
-        }
-
-        private void Form_Query_7_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            conn.Close();
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            Cursor.Current = Cursors.Default;
+            toolStripStatusLabel.Text = result;
         }
     }
 }

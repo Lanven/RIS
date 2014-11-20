@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class_Helper.cs" />
     <Compile Include="Edit\Form_Clients.cs">
       <SubType>Form</SubType>
     </Compile>

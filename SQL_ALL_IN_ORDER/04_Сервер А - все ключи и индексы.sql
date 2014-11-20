@@ -9,6 +9,8 @@ ALTER TABLE sa.clients ADD PRIMARY KEY (id);
 ALTER TABLE sa.orders_main ADD PRIMARY KEY (id);
 ALTER TABLE sa.orders_info ADD PRIMARY KEY (id);
 
+ALTER TABLE sa.companies ADD CONSTRAINT companies_country_id
+	FOREIGN KEY (country_id) REFERENCES sa.countries (id); 
 
 ALTER TABLE sa.companies_monthly ADD CONSTRAINT companies_monthly_id
 	FOREIGN KEY (id) REFERENCES sa.companies (id); 
