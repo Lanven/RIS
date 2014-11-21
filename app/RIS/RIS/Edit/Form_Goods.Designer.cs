@@ -284,6 +284,7 @@
             this.Controls.Add(this.dataGridView_Goods);
             this.Name = "Form_Goods";
             this.Text = "Редактирование товаров";
+            this.Shown += new System.EventHandler(this.Form_Goods_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Goods)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

@@ -63,8 +63,8 @@ namespace RIS
             } 
 
             //dataGridView_Categories.Columns["id"].Visible = false;
-            //dataGridView_Goods.Columns["category_id"].Visible = false;
-            //dataGridView_Goods.Columns["company_id"].Visible = false;
+            dataGridView_Goods.Columns["category_id"].Visible = false;
+            dataGridView_Goods.Columns["company_id"].Visible = false;
         }
 
         private void GetCategories()
@@ -169,7 +169,16 @@ namespace RIS
                 MessageBox.Show("Неверная цена");
                 return false;
             }
-
+            if(comboBox_Category.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите категорию");
+                return false;
+            }
+            if(comboBox_Company.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите компанию");
+                return false;
+            }
             return true;
         }
 
@@ -315,6 +324,12 @@ namespace RIS
             GetCategories();
             GetCompanies();
             RefreshData();
+        }
+
+        private void Form_Goods_Shown(object sender, EventArgs e)
+        {
+            GetCategories();
+            GetCompanies();
         }
     }
 }

@@ -143,7 +143,7 @@ namespace RIS
             excelWorkBook = excelApp.Workbooks.Add();
             excelWorkSheet = (Worksheet)excelWorkBook.Worksheets[1];
 
-            excelApp.Cells[1, 1] = "Фирма";
+            excelApp.Cells[1, 1] = "Фирма:";
             excelWorkSheet.Cells[1, 1].Font.Bold = true;
             excelWorkSheet.Range["B1:G1"].Merge();
             excelApp.Cells[1, 2] = name;

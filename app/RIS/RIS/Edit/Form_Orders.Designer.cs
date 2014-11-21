@@ -317,6 +317,7 @@
             this.Controls.Add(this.dataGridView_Orders);
             this.Name = "Form_Orders";
             this.Text = "Редактирование заказов";
+            this.Shown += new System.EventHandler(this.Form_Orders_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Orders)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

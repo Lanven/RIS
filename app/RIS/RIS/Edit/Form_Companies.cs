@@ -58,7 +58,7 @@ namespace RIS
             }        
             
             //dataGridView_Categories.Columns["id"].Visible = false;
-            //dataGridView_Companies.Columns["country_id"].Visible = false;
+            dataGridView_Companies.Columns["country_id"].Visible = false;
         }
 
         private void GetCountries()
@@ -137,6 +137,11 @@ namespace RIS
             if (!Class_Helper.IsCorrect_String(name))
             {
                 MessageBox.Show("Неверное название компании");
+                return false;
+            }
+            if (comboBox_Country.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите страну");
                 return false;
             }
             return true;
@@ -282,6 +287,11 @@ namespace RIS
         {
             GetCountries();
             RefreshData();
+        }
+
+        private void Form_Companies_Shown(object sender, EventArgs e)
+        {
+            GetCountries();
         }
     }
 }

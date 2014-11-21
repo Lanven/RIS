@@ -80,10 +80,10 @@ namespace RIS
                 throw new Exception("Can't init datagrid/combobox: " + ex.Message);
             } 
             //dataGridView_Categories.Columns["id"].Visible = false;
-            //dataGridView_Orders.Columns["goods_id"].Visible = false;
-            //dataGridView_Orders.Columns["client_id"].Visible = false;
-            //dataGridView_Orders.Columns["payment_method_id"].Visible = false;
-            //dataGridView_Orders.Columns["sale_type_id"].Visible = false;
+            dataGridView_Orders.Columns["goods_id"].Visible = false;
+            dataGridView_Orders.Columns["client_id"].Visible = false;
+            dataGridView_Orders.Columns["payment_method_id"].Visible = false;
+            dataGridView_Orders.Columns["sale_type_id"].Visible = false;
 
         }
 
@@ -230,7 +230,28 @@ namespace RIS
                 MessageBox.Show("Неверная сумма покупки");
                 return false;
             }
-                       
+
+            if (comboBox_Client.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите клиента");
+                return false;
+            }
+            if (comboBox_Goods.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите модель товара");
+                return false;
+            }
+            if (comboBox_Payment_Method.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите способ оплаты");
+                return false;
+            }
+            if (comboBox_Sale_Type.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите тип продажи");
+                return false;
+            }
+            
             return true;
         }
 
@@ -382,6 +403,14 @@ namespace RIS
             GetPaymentMethods();
             GetSaleTypes();
             RefreshData();
+        }
+
+        private void Form_Orders_Shown(object sender, EventArgs e)
+        {
+            GetGoods();
+            GetClients();
+            GetPaymentMethods();
+            GetSaleTypes();
         }
 
     }

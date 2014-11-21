@@ -174,7 +174,8 @@ namespace RIS
             doc = wordApp.Documents.Add();
             wordParagraphs = doc.Paragraphs;
             wordParagraph = (Paragraph)wordParagraphs[1];
-            
+
+            wordParagraph.Range.Paragraphs.SpaceAfter = 0;
             wordParagraph.Range.Font.Size = 14;
             wordParagraph.Range.Font.Name = "Times New Roman";
             wordParagraph.Alignment = WdParagraphAlignment.wdAlignParagraphJustify;
@@ -219,6 +220,7 @@ namespace RIS
             objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
             rngBold = doc.Range(ref objStart, ref objEnd);
             rngBold.Bold = 1;
+            doc.Paragraphs.Add();
             doc.Paragraphs.Add();
 
             wordParagraph.Range.Font.Size = 10;

@@ -313,6 +313,7 @@
             this.Controls.Add(this.dataGridView_Companies);
             this.Name = "Form_Companies";
             this.Text = "Редактирование компаний";
+            this.Shown += new System.EventHandler(this.Form_Companies_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Companies)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
