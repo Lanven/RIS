@@ -12,7 +12,7 @@ return;
 EXCEPTION WHEN unique_violation THEN
 raise exception 'Country already exists';
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION func_countries_on_update(p_id integer, p_name text) RETURNS void AS $$
@@ -27,7 +27,7 @@ return;
 EXCEPTION WHEN unique_violation THEN
 raise exception 'Country already exists';
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION func_countries_on_delete(p_id integer) RETURNS void AS $$
@@ -42,4 +42,4 @@ return;
 EXCEPTION WHEN foreign_key_violation THEN
 raise exception 'Referenced data exist';
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

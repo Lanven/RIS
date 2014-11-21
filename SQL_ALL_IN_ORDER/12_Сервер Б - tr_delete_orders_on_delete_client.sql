@@ -8,7 +8,7 @@ DELETE FROM sb.orders_main WHERE client_id = OLD.id;
 
 return OLD;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_delete_orders_on_delete_client
 BEFORE DELETE ON sb.clients FOR EACH ROW

@@ -33,7 +33,7 @@ end if;
 
 END
 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 --DROP FUNCTION func_distribution_goods_on_update();
 
@@ -72,7 +72,7 @@ UPDATE sb.goods_info SET price = p_price,
 end if;
 
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 --select func_distribution_goods_on_update (10168, 332, 598, 'bbb', 1000, 'bbbbbbb');
 
@@ -102,4 +102,4 @@ DELETE FROM sb.goods_main WHERE id = p_id;
 end if;
 
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

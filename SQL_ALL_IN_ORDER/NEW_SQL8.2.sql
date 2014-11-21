@@ -30,4 +30,4 @@ RETURN QUERY
 	WHERE sb.companies.id = p_id;
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

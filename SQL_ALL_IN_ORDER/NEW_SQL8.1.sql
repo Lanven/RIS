@@ -18,5 +18,5 @@ RETURN QUERY
 	FROM sb.companies) a
 	ORDER BY 2;
 END
-$$  LANGUAGE plpgsql;	
+$$  LANGUAGE plpgsql SECURITY DEFINER;	
 

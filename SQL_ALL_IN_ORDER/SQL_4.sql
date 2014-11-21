@@ -11,4 +11,4 @@ BEGIN
 	FROM sa.countries
 	ORDER BY summa DESC NULLS LAST, name ASC;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

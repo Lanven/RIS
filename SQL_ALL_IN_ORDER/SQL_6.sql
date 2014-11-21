@@ -18,4 +18,4 @@ RETURN QUERY
 	WHERE month = p_month
 	ORDER BY 1,2,3,4,5;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

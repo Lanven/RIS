@@ -117,49 +117,42 @@ namespace RIS
 
             string birthdate_str = textBox_Birthdate.Text;
 
-            if (surname == "")
+
+            if (!Class_Helper.IsCorrect_String(surname))
             {
-                MessageBox.Show("Введите фамилию");
+                MessageBox.Show("Неверная фамилия");
                 return false;
             }
-            if (name == "")
+            if (!Class_Helper.IsCorrect_String(name))
             {
-                MessageBox.Show("Введите имя");
+                MessageBox.Show("Неверное имя");
                 return false;
             }
-            if (patronymic == "")
+            if (!Class_Helper.IsCorrect_String(patronymic))
             {
-                MessageBox.Show("Введите отчество");
+                MessageBox.Show("Неверное отчество");
                 return false;
             }
-            if (birthdate_str == "")
-            {
-                MessageBox.Show("Введите дату рождения");
-                return false;
-            }
-            DateTime birthdate;
-            if (!DateTime.TryParse(birthdate_str, out birthdate))
+            if (!Class_Helper.IsCorrect_Date(birthdate_str))
             {
                 MessageBox.Show("Неверная дата рождения");
                 return false;
             }
-            if (passport_series == "")
+            if (!Class_Helper.IsCorrect_String(passport_series))
             {
-                MessageBox.Show("Введите серию паспорта");
+                MessageBox.Show("Неверная серия паспорта");
                 return false;
             }
-            if (passport_number == "")
+            if (!Class_Helper.IsCorrect_String(passport_number))
             {
-                MessageBox.Show("Введите номер паспорта");
+                MessageBox.Show("Неверный номер паспорта");
                 return false;
             }
-            DateTime issue_date;
-            if (issue_date_str != "")
-                if (!DateTime.TryParse(issue_date_str, out issue_date))
-                {
-                    MessageBox.Show("Неверная дата выдачи");
-                    return false;
-                }
+            if (!Class_Helper.IsCorrect_Date(issue_date_str))
+            {
+                MessageBox.Show("Неверная дата выдачи");
+                return false;
+            }
             
             return true;
         }

@@ -219,31 +219,18 @@ namespace RIS
             //int sale_type_id = (int)comboBox_Sale_Type.SelectedValue;
 
             //string details = richTextBox_Details.Text;
-
-            if (on_sale_date_str == "")
-            {
-                MessageBox.Show("Введите дату покупки");
-                return false;
-            }
-            DateTime on_sale_date;
-            if (!DateTime.TryParse(on_sale_date_str, out on_sale_date))
+            if (!Class_Helper.IsCorrect_Date(on_sale_date_str))
             {
                 MessageBox.Show("Неверная дата покупки");
                 return false;
             }
 
-            if (on_sale_date_str == "")
-            {
-                MessageBox.Show("Введите дату покупки");
-                return false;
-            }
-            Decimal sale_amount;
-            if (!Decimal.TryParse(sale_amount_str, out sale_amount))
+            if (!Class_Helper.IsCorrect_Decimal(sale_amount_str))
             {
                 MessageBox.Show("Неверная сумма покупки");
                 return false;
             }
-
+                       
             return true;
         }
 

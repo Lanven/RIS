@@ -18,4 +18,4 @@ RETURN QUERY
 	FROM sb.clients
 	ORDER BY passport_series,passport_number;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

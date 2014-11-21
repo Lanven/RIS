@@ -31,7 +31,7 @@ EXCEPTION WHEN unique_violation THEN
 raise exception 'Client already exists';
 return;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 
@@ -62,7 +62,7 @@ EXCEPTION WHEN unique_violation THEN
 raise exception 'Client already exists';
 return;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 --DROP FUNCTION func_delete_client(integer);
@@ -80,6 +80,6 @@ perform dblink_disconnect();
 
 return;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 --select func_delete_client(50002);

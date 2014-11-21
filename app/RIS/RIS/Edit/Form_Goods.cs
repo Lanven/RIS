@@ -159,18 +159,17 @@ namespace RIS
 
             //string description = richTextBox_Description.Text;
 
-            if (model == "")
+            if (!Class_Helper.IsCorrect_String(model))
             {
-                MessageBox.Show("Введите название модели товара");
+                MessageBox.Show("Неверное название модели");
                 return false;
             }
-            Decimal price;
-            if (price_str != "")
-                if (!Decimal.TryParse(price_str, out price))
-                {
-                    MessageBox.Show("Неверная цена");
-                    return false;
-                }
+            if (!Class_Helper.IsCorrect_Decimal(price_str))
+            {
+                MessageBox.Show("Неверная цена");
+                return false;
+            }
+
             return true;
         }
 

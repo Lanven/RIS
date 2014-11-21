@@ -5,7 +5,7 @@ DELETE FROM sa.goods_main WHERE company_id = OLD.id;
 
 return OLD;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_delete_goods_on_delete_company
 BEFORE DELETE ON sa.companies FOR EACH ROW

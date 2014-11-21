@@ -28,7 +28,7 @@ INSERT INTO sb.companies VALUES (p_id,
 end if;
 return;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION func_companies_on_update(p_id integer, p_name text,
@@ -56,7 +56,7 @@ UPDATE sb.companies SET
 end if;			
 return;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 
@@ -79,6 +79,6 @@ end if;
 
 return;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 --select func_distribution_company_on_delete(606);

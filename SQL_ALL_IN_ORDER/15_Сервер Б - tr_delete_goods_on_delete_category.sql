@@ -5,7 +5,7 @@ DELETE FROM sb.goods_main WHERE category_id = OLD.id;
 
 return OLD;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_delete_goods_on_delete_category
 BEFORE DELETE ON sb.categories FOR EACH ROW

@@ -15,7 +15,7 @@ BEGIN
 	ORDER BY summa DESC, sa.companies.name ASC;
 
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 --SELECT sa.companies.name, sa.countries.name, sa.companies_monthly.summa
 --FROM sa.companies_monthly

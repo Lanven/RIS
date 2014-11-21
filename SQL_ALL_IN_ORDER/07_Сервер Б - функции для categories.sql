@@ -12,7 +12,7 @@ RETURN;
 EXCEPTION WHEN unique_violation THEN
 raise exception 'Category already exists';
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION func_categories_on_update(p_id integer, p_title text) RETURNS void AS $$
@@ -28,7 +28,7 @@ RETURN;
 EXCEPTION WHEN unique_violation THEN
 raise exception 'Category already exists';
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION func_categories_on_delete(p_id integer) RETURNS void AS $$
@@ -41,4 +41,4 @@ perform dblink_exec ('DELETE FROM sa.categories  WHERE id='||p_id||';');
 perform dblink_disconnect();
 RETURN;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

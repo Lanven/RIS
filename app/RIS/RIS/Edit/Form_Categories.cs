@@ -80,9 +80,9 @@ namespace RIS
         private bool IsEveryFieldCorrect()
         {
             string title = textBox_Title.Text;
-            if (title == "")
+            if (!Class_Helper.IsCorrect_String(title))
             {
-                MessageBox.Show("Введите название");
+                MessageBox.Show("Неверное название категории");
                 return false;
             }
             return true;

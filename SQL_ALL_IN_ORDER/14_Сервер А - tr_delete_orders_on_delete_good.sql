@@ -5,7 +5,7 @@ DELETE FROM sa.orders_main WHERE goods_id = OLD.id;
 
 return OLD;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_delete_orders_on_delete_good
 BEFORE DELETE ON sa.goods_main FOR EACH ROW

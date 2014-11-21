@@ -34,7 +34,7 @@ INSERT INTO sb.orders_info VALUES (p_id, p_sale_type_id, p_details);
 end if;
 
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION func_orders_on_update(p_id integer, p_goods_id integer, p_client_id integer, 
@@ -78,7 +78,7 @@ UPDATE sb.orders_info SET
 end if;
 
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 
@@ -106,5 +106,5 @@ DELETE FROM sb.orders_main WHERE id = p_id;
 end if;
 
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 

@@ -16,4 +16,4 @@ SELECT surname, name, patronymic, birthdate, phone, email, address
     ORDER BY birthdate DESC, surname, name, patronymic;
 
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

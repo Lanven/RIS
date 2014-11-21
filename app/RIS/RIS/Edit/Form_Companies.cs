@@ -132,16 +132,11 @@ namespace RIS
             //string phone = textBox_Phone.Text;
             //string address = textBox_Address.Text;
             //string bank_details = textBox_Bank_details.Text;
-            int country_id = (int)comboBox_Country.SelectedValue;
+            //int country_id = (int)comboBox_Country.SelectedValue;
 
-            if (name == "")
+            if (!Class_Helper.IsCorrect_String(name))
             {
-                MessageBox.Show("Введите название компании");
-                return false;
-            }
-            if (country_id <= 0)
-            {
-                MessageBox.Show("Неверная страна");
+                MessageBox.Show("Неверное название компании");
                 return false;
             }
             return true;

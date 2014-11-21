@@ -76,9 +76,9 @@ namespace RIS
         private bool IsEveryFieldCorrect()
         {
             string name = textBox_Name.Text;
-            if (name =="")
+            if (!Class_Helper.IsCorrect_String(name))
             {
-                MessageBox.Show("Введите название");
+                MessageBox.Show("Неверное название страны");
                 return false;
             }
             return true;

@@ -23,4 +23,4 @@ SELECT * FROM (
 ORDER BY 1;
 
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

@@ -43,4 +43,4 @@ RETURN QUERY
 
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

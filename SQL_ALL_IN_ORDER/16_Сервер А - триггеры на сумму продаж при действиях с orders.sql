@@ -45,7 +45,7 @@ UPDATE sa.countries SET summa = v_summa WHERE id = v_country_id;
 
 return NEW;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_add_money_on_insert_order
 BEFORE INSERT ON sa.orders_main FOR EACH ROW
@@ -75,7 +75,7 @@ UPDATE sa.countries SET summa = summa - OLD.sale_amount + NEW.sale_amount WHERE 
 
 return NEW;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_change_money_on_update_order
 BEFORE UPDATE ON sa.orders_main FOR EACH ROW
@@ -122,7 +122,7 @@ UPDATE sa.countries SET summa = v_summa WHERE id = v_country_id;
 
 return OLD;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_change_money_on_delete_order
 BEFORE DELETE ON sa.orders_main FOR EACH ROW

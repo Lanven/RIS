@@ -9,6 +9,6 @@ RETURN (SELECT count(*)
 		FROM sa.companies
 		WHERE sa.companies.country_id = '||p_id||'') as company (company_id integer));
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
-select func_search_companies_by_country(1);
+--select func_search_companies_by_country(1);

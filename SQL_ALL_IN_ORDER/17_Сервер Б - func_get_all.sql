@@ -8,7 +8,7 @@ BEGIN
 RETURN QUERY
 	SELECT c.id, c.title from sb.categories c;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_all_countries()
   RETURNS TABLE (    
@@ -26,7 +26,7 @@ RETURN QUERY
               FROM sb.countries) a
         ORDER BY 2;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_all_clients()
   RETURNS TABLE (    
@@ -56,7 +56,7 @@ RETURN QUERY
                                   ) a 
         JOIN sb.clients b on a.id = b.id;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_all_companies()
   RETURNS TABLE(id integer, name text, country_id integer, country text, head_full_name text, phone text, address text, bank_details text) AS
@@ -77,7 +77,7 @@ RETURN QUERY
 	ORDER BY 2;
 END
 $$
-  LANGUAGE plpgsql
+  LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_companies_by_server(serv_id integer)
   RETURNS TABLE (    
@@ -105,7 +105,7 @@ RETURN QUERY
 	JOIN sb.countries c ON c.id = b.country_id;
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_list_countries_by_server(serv_id integer)
   RETURNS TABLE (    
@@ -124,7 +124,7 @@ RETURN QUERY
       FROM sb.countries;
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION get_list_companies_by_server(serv_id integer)
@@ -145,7 +145,7 @@ RETURN QUERY
 	FROM sb.companies b;
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_goods_by_server(serv_id integer)
   RETURNS TABLE (    
@@ -177,7 +177,7 @@ RETURN QUERY
 	JOIN sb.companies comp ON comp.id = bm.company_id;
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION get_orders_by_server(serv_id integer)
@@ -221,7 +221,7 @@ RETURN QUERY
 	JOIN sb.payment_methods pm ON pm.id = om.payment_method_id;
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 
 
@@ -235,7 +235,7 @@ BEGIN
 RETURN QUERY
 	SELECT c.id, c.title from sb.sale_types c;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION get_all_payment_methods()
   RETURNS TABLE (    
@@ -247,7 +247,7 @@ BEGIN
 RETURN QUERY
 	SELECT c.id, c.title from sb.payment_methods c;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 
 
@@ -261,7 +261,7 @@ BEGIN
 RETURN QUERY
 	SELECT sb.clients.id, (surname ||' '|| name||' '||patronymic)as fio FROM sb.clients;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION get_list_goods_by_server(serv_id integer)
@@ -281,4 +281,4 @@ RETURN QUERY
 	SELECT sb.goods_main.id, sb.goods_main.model FROM sb.goods_main;
 end if;
 END
-$$  LANGUAGE plpgsql;
+$$  LANGUAGE plpgsql SECURITY DEFINER;

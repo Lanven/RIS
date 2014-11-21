@@ -215,7 +215,22 @@ namespace RIS
             return result;
         }
 
-
+        public static bool IsCorrect_Date(string dateStr)
+        {
+            DateTime date;
+            return DateTime.TryParse(dateStr, out date);
+        }
+        public static bool IsCorrect_String(string str)
+        {
+            if (str == "")
+                return false;
+            return true;
+        }
+        public static bool IsCorrect_Decimal(string decimStr)
+        {
+            Decimal decim;
+            return Decimal.TryParse(decimStr, out decim);
+        }
 
     }
 }

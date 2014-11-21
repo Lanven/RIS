@@ -18,7 +18,7 @@ INSERT INTO sa.companies_monthly VALUES
 (NEW.id, 12, null);
 return NEW; 
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_add_into_companies_monthly_on_companies_insert
 AFTER INSERT ON sa.companies FOR EACH ROW
@@ -32,7 +32,7 @@ DELETE FROM sa.companies_monthly
 WHERE id = OLD.id;
 return OLD; 
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER tr_delete_company_from_companies_monthly_on_delete
 BEFORE DELETE ON sa.companies FOR EACH ROW
