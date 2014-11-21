@@ -70,3 +70,4 @@ C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.Pr
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.csproj.GenerateResource.Cache
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.exe
 C:\Users\Администратор\Desktop\RIS\RIS\app\RIS\RIS\obj\Debug\RIS.pdb
+D:\RIS\app\RIS\RIS\obj\Debug\RIS.csprojResolveAssemblyReference.cache

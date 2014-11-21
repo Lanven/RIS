@@ -18,7 +18,7 @@ namespace RIS
         private NpgsqlConnection conn;
         private DataTable table;
         private string queryName = "query05";
-        List<TableColumn> columns = new List<TableColumn> {new TableColumn("company", "date", "Компания"),
+        List<TableColumn> columns = new List<TableColumn> {new TableColumn("company", "text", "Компания"),
                                                             new TableColumn("country", "text", "Страна"),
                                                             new TableColumn("summ", "num", "Сумма продажи")};
 
