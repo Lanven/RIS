@@ -16,14 +16,15 @@ namespace RIS
 {
     public partial class Form_Query_Word : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
 
+        //для комбобокса Список фирм 
         private System.Data.DataTable tableFirms;
         private string queryFirms = "query81";
         List<TableColumn> members = new List<TableColumn> {new TableColumn("name", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-        
+        //для грида Инфо о компании
         private System.Data.DataTable tableInfo;
         private string queryInfo = "query82";
         List<TableColumn> columnsInfo = new List<TableColumn> {new TableColumn("company_name", "text", "Компания"),
@@ -32,23 +33,23 @@ namespace RIS
                                                                new TableColumn("phon", "text", "Телефон"),
                                                                new TableColumn("addres", "text", "Адрес"),
                                                                new TableColumn("bank_detail", "text", "Реквизиты")};
-        
+        //для грида Данные компании
         private System.Data.DataTable tableData;
         private string queryData = "query83";
         List<TableColumn> columnsData = new List<TableColumn> {new TableColumn("category", "text", "Категория"),
                                                                new TableColumn("modell", "text", "Модель"),
                                                                new TableColumn("payment_method", "text", "Метод оплаты"),
                                                                new TableColumn("summ", "num", "Сумма")};
-
+        //инициализация формы
         public Form_Query_Word(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            //инициализация гридов и комбобокса
             this.tableFirms = new System.Data.DataTable();
             this.tableInfo = new System.Data.DataTable();
             this.tableData = new System.Data.DataTable();
-
             try
             {
                 Class_Helper.SetColumns(tableData, dataGridView_Data, columnsData);
@@ -61,7 +62,7 @@ namespace RIS
             }        
 
         }
-
+        //получение Списка фирм
         private void getFirmList()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -79,12 +80,12 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel_1.Text = result;
         }
-
+        //кнопка Фирмы
         private void button_GetFirmList_Click(object sender, EventArgs e)
         {
             getFirmList();
         }
-
+        //проверка, является ли строка датой
         private bool IsDate(string str)
         {
             DateTime myDate;
@@ -92,23 +93,23 @@ namespace RIS
                 return true;
             return false;
         }
-        
+        //кнопка Просмотр
         private void button_GetLook_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
+            //ид фирмы
             if (comboBox_Firms.SelectedIndex == -1)
             {
-                MessageBox.Show("Choose firm");
+                MessageBox.Show("Выберите фирму");
                 return;
             }
-
             int firmID = Convert.ToInt32(comboBox_Firms.SelectedValue);
+            //даты и проверка
             string fromStr = maskedTextBox_From.Text;
             string toStr = maskedTextBox_To.Text;
-
             if (!IsDate(fromStr) || !IsDate(toStr))
             {
-                MessageBox.Show("Incorrect dates");
+                MessageBox.Show("Неверные даты");
                 return;
             }
             DateTime from = DateTime.Parse(fromStr);
@@ -118,6 +119,7 @@ namespace RIS
             label6.Text = toStr;
             label7.Text = ((System.Data.DataRowView)comboBox_Firms.SelectedItem).Row["name"].ToString();
             /**************************************/
+            //запрос для получения Инфо о фирме
             List<Parameter> parametersInfo = new List<Parameter> { new Parameter("id", "int", firmID)};
             string resultInfo = "";
             try
@@ -134,6 +136,7 @@ namespace RIS
             toolStripStatusLabel_1.Text = resultInfo;
 
             ////////////////////////////////////
+            //запрос для получения Данных фирмы
             List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", firmID),
                                                                 new Parameter("from", "date", from),
                                                                 new Parameter("to", "date", to)};
@@ -151,7 +154,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel_2.Text = result;
         }
-
+        //вывод данных в Ворд
         private void button_GetWordReport_Click(object sender, EventArgs e)
         {
             string from = label5.Text;
@@ -163,6 +166,7 @@ namespace RIS
                 MessageBox.Show("Пожалуйста, введите данные и нажмите просмотр");
                 return;
             }
+            //создание документа
             Microsoft.Office.Interop.Word.Application wordApp;
             object objStart, objEnd;
             Range rngBold;
@@ -175,11 +179,13 @@ namespace RIS
             wordParagraphs = doc.Paragraphs;
             wordParagraph = (Paragraph)wordParagraphs[1];
 
-            wordParagraph.Range.Paragraphs.SpaceAfter = 0;
-            wordParagraph.Range.Font.Size = 14;
-            wordParagraph.Range.Font.Name = "Times New Roman";
-            wordParagraph.Alignment = WdParagraphAlignment.wdAlignParagraphJustify;
+            //задание стиля шапки
+            wordParagraph.Range.Paragraphs.SpaceAfter = 0;//междустрочный
+            wordParagraph.Range.Font.Size = 14;//размер шрифта
+            wordParagraph.Range.Font.Name = "Times New Roman";//шрифт
+            wordParagraph.Alignment = WdParagraphAlignment.wdAlignParagraphJustify;//выравнивание
 
+            //вывод пункта, значения, выделение названия пункта жирным шрифтом, новый абзац
             wordParagraph.Range.Text = "Фирма: " + dataGridView_Firm.Rows[0].Cells[0].Value;
             objStart = wordParagraph.Range.Start;
             objEnd = wordParagraph.Range.Start + wordParagraph.Range.Text.IndexOf(":");
@@ -223,20 +229,22 @@ namespace RIS
             doc.Paragraphs.Add();
             doc.Paragraphs.Add();
 
+            //создание таблицы
             wordParagraph.Range.Font.Size = 10;
             Table wordtable = doc.Tables.Add(wordParagraph.Range, dataGridView_Data.Rows.Count + 1, dataGridView_Data.ColumnCount);
+            //задание стиля границ
             wordtable.Borders.InsideLineStyle = WdLineStyle.wdLineStyleSingle;
             wordtable.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleDouble;
             wordtable.Range.Paragraphs.SpaceAfter = 0;
             Range wordCellRange;
-
+            //шапка таблицы
             for (int i = 0; i < dataGridView_Data.ColumnCount; i++)
             {
                 wordCellRange = wordtable.Cell(1, i + 1).Range;
                 wordCellRange.Text = dataGridView_Data.Columns[i].HeaderText;
             }
             wordtable.Rows[1].Range.Font.Bold = 1;
-
+            //заполнение данными
             for (int i = 0; i < dataGridView_Data.Rows.Count; i++)
             {
                 for (int j = 0; j < dataGridView_Data.ColumnCount; j++)
@@ -246,7 +254,7 @@ namespace RIS
                 }
             }
 
-            wordApp.Visible = true;
+            wordApp.Visible = true;//показать юзеру составленный документ
         }
     }
 }

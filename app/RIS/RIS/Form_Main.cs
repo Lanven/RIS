@@ -13,6 +13,7 @@ namespace RIS
 {
     public partial class Form_Main : Form
     {
+        //подключение Длл
         [DllImport("Math.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern double Add(double a, double b);
         [DllImport("Math.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -21,7 +22,7 @@ namespace RIS
         public static extern double Multiply(double a, double b);
         private string connStr;
         private bool show;
-
+        //Инициализация формы
         public Form_Main()
         {
             InitializeComponent();
@@ -29,18 +30,20 @@ namespace RIS
             show = false;
             beforeEnter();
         }
-
+        //Показ формы первый раз, если юзер не стал логиниться - то выход
         private void Form_Main_Shown(object sender, EventArgs e)
         {
             if (show == false)
                 this.Close();
         }
+        //вызывается каждый раз при смене видимости формы
         private void Form_Main_VisibleChanged(object sender, EventArgs e)
         {
             if (show == false)
                 this.Close();
         }
-
+        //функция вызова формы логина, получения данных для подключения
+        //если юзер не стал логиниться, то выключаемся
         private void beforeEnter()
         {
             Form_Login Login_Form = new Form_Login();
@@ -61,7 +64,7 @@ namespace RIS
             }
             this.Show();
         }
-
+        //установка доступности меню в зависимости от сервера подключения
         private void SetMenuStates(int server)
         {
             bool state = server == 0;
@@ -77,25 +80,27 @@ namespace RIS
 
             данныеToolStripMenuItem.Enabled = !state;
         }
-
+        //выбор Выйти в меню, перелогин
         private void выйтиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
             show = false;
             beforeEnter();
         }
-
+        //меню Выход - из программы
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
-
+        //Окно О программе
         private void оПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form_About AbouthForm = new Form_About();
             AbouthForm.ShowDialog();
         }
-
+        
+        //Далее
+        //обработка выбора пунктов меню - включение форм запросов и редактирования
         private void запрос2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -277,7 +282,8 @@ namespace RIS
                 MessageBox.Show(ex.Message);
             }
         }
-
+       
+        //для Дллки
         private void button1_Click(object sender, EventArgs e)
         {
             int a = (int)numericUpDown1.Value;

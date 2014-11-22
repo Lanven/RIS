@@ -14,8 +14,9 @@ namespace RIS
 {
     public partial class Form_Query_7 : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
+        //таблица, запрос и колонки для грида
         private DataTable table;
         private string queryName = "query07";
         List<TableColumn> columns = new List<TableColumn> {new TableColumn("surnam", "text", "Фамилия"),
@@ -26,14 +27,14 @@ namespace RIS
                                                             new TableColumn("passport_numbe", "text", "Номер паспорта"),
                                                             new TableColumn("issue_dat", "date", "Дата выдачи"),
                                                             new TableColumn("issue_departmen", "text", "Отделение выдачи")};
-
+        //создание формы       
         public Form_Query_7(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            //инициализация грида
             this.table = new DataTable();
-
             try
             {
                 Class_Helper.SetColumns(table, dataGridView_Clients, columns);
@@ -43,7 +44,8 @@ namespace RIS
                 throw new Exception("Can't init datagrid: " + ex.Message);
             }
         }
-
+        //кнопка запроса
+        //выполнение запроса
         private void button_Get_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;

@@ -13,20 +13,23 @@ namespace RIS
 {
     public partial class Form_Login : Form
     {
+        //поля для данных, получаемых в главной форме
         public string server { get; set; }
         public int servId { get; set; }
         public string login { get; set; }
         //public string database { get; set; }
         public string connStr { get; set; }
 
+        //инициализация формы
         public Form_Login()
         {
             InitializeComponent();
-            comboBox_Server.SelectedIndex = 1;
+            comboBox_Server.SelectedIndex = 1;//поставить сервер по умолчанию
         }
-
+        //кнопка Войти
         private void button_LogIn_Click(object sender, EventArgs e)
         {
+            //Получение логина, пароля, выбранного сервера
             this.login = textBox_Login.Text;
             string password = textBox_Password.Text;
             int serv = comboBox_Server.SelectedIndex;
@@ -41,21 +44,30 @@ namespace RIS
                     this.server = "127.0.0.1";
                     break;
                 default:
-                    comboBox_Server.BackColor = Color.Crimson;
                     return;
             }
+            //составление строки подключения
             this.connStr = "Server=" + server + ";Database=risbd6;User Id=" + login + ";Password=" + password + ";";
+            NpgsqlConnection conn = new NpgsqlConnection(connStr);
+            //попытка подключения к базе с введенными данными
+            //если получилось - закрываемся
+            //данные можно будет получить из главной формы
             try
             {
-                NpgsqlConnection conn = new NpgsqlConnection(connStr);
                 conn.Open();
                 this.DialogResult = DialogResult.OK;
                 conn.Close();
                 this.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Неверный логин/пароль.");
+                string error = "";
+                if (ex.Source == "Npgsql")
+                    if (((NpgsqlException)ex).Code == "28000" || ((NpgsqlException)ex).Code == "28P01")
+                        error = "Неверный логин/пароль";
+                    else
+                        error = ex.Message;
+                MessageBox.Show(error);
             }
         }
     }

@@ -14,15 +14,16 @@ namespace RIS
 {
     public partial class Form_Companies : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
-        
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
+        //запросы на созданение, изменение, удаление
         private string funcCreate = "func_companies_on_insert";
         private string funcChange = "func_companies_on_update";
         private string funcDelete = "func_companies_on_delete";
-
-        private DataTable tableCompanies;
+        //запрос на получение данных в зависимости от сервера
         private string queryName = "get_companies_by_server";
+        //таблица и колонки для грида
+        private DataTable tableCompanies;
         List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
                                                             new TableColumn("name", "text", "Название"),
                                                             new TableColumn("country", "text", "Страна"),
@@ -31,11 +32,13 @@ namespace RIS
                                                             new TableColumn("phone", "text", "Номер телефона"),
                                                             new TableColumn("address", "text", "Юридический адрес компании"),
                                                             new TableColumn("bank_details", "text", "Банковские реквизиты компании")};
-        private DataTable tableCountries;
+        //запрос на получение данных в зависимости от сервера
         private string queryCountries = "get_list_countries_by_server";
+        //таблица и колонки для комбобокса
+        private DataTable tableCountries;
         List<TableColumn> members = new List<TableColumn> {new TableColumn("name", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-
+        //создание формы
         public Form_Companies(string connStr)
         {
             InitializeComponent();
@@ -43,7 +46,7 @@ namespace RIS
 
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
-
+            //инициализация грида
             this.tableCompanies = new System.Data.DataTable();
             this.tableCountries = new System.Data.DataTable();
 
@@ -55,12 +58,12 @@ namespace RIS
             catch (Exception ex)
             {
                 throw new Exception("Can't init datagrid/combobox: " + ex.Message);
-            }        
-            
+            }
+            //задать отображаемые колнки в гриде
             //dataGridView_Categories.Columns["id"].Visible = false;
             dataGridView_Companies.Columns["country_id"].Visible = false;
         }
-
+        //получить список стран
         private void GetCountries()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -80,7 +83,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //Обновить отображаемые данные
         private void RefreshData()
         {
             string result = "";
@@ -101,7 +104,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //щелчок по гриду - получение координат выбранной ячейки и перенос данных в поля
         private void dataGridView_Companies_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.RowIndex != -1 && e.ColumnIndex != -1)
@@ -124,7 +127,7 @@ namespace RIS
             }
 
         }
-
+        //проверка введенных данных на корректность
         private bool IsEveryFieldCorrect()
         {
             string name = textBox_Name.Text;
@@ -282,15 +285,16 @@ namespace RIS
             toolStripStatusLabel.Text = "Компания удалена. " + result;
 
         }
-
+        //кнопка Обновить
         private void button_Refresh_Click(object sender, EventArgs e)
         {
             GetCountries();
             RefreshData();
         }
-
+        //перед первым показом формы 
         private void Form_Companies_Shown(object sender, EventArgs e)
         {
+            //получить список стран
             GetCountries();
         }
     }

@@ -14,23 +14,26 @@ namespace RIS
 {
     public partial class Form_Countries : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
-        private DataTable table;
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
+        //запрос на получение всего списка
         private string queryName = "get_all_countries";
+        //запросы на созданение, изменение, удаление
         private string funcCreate = "func_countries_on_insert";
         private string funcChange = "func_countries_on_update";
         private string funcDelete = "func_countries_on_delete";
+        //таблица и колонки для грида
+        private DataTable table;
         List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
                                                             new TableColumn("name", "text", "Название")};
-
+        //создание формы
         public Form_Countries(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            //инициализация грида
             this.table = new DataTable();
-
             try
             {
                 Class_Helper.SetColumns(table, dataGridView_Countries, columns);
@@ -39,7 +42,7 @@ namespace RIS
             {
                 throw new Exception("Can't init datagrid: " + ex.Message);
             }
-
+            //получить ид России (сервер Б)
             try
             {
                 string query = "SELECT id from sb.countries";
@@ -54,7 +57,7 @@ namespace RIS
                 throw new Exception("Can't connect to B: " + ex.Message);
             }
         }
-
+        //Обновить отображаемые данные
         private void RefreshData()
         {
             string result = "";
@@ -72,7 +75,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //проверка введенных данных на корректность
         private bool IsEveryFieldCorrect()
         {
             string name = textBox_Name.Text;
@@ -83,7 +86,7 @@ namespace RIS
             }
             return true;
         }
-
+        //создать
         private void button_Create_Click(object sender, EventArgs e)
         {
             if (!IsEveryFieldCorrect())
@@ -92,10 +95,11 @@ namespace RIS
             }
 
             Cursor.Current = Cursors.WaitCursor;
+            //параметры с формы
             string name = textBox_Name.Text;
-
+            //записать в списко параметров
             List<Parameter> parameters = new List<Parameter> { new Parameter("name", "text", name) };
-
+            //выполнить функцию
             string result = "";
             try
             {
@@ -114,9 +118,10 @@ namespace RIS
                 return;
             }
             Cursor.Current = Cursors.Default;
+            //результат
             toolStripStatusLabel.Text = "Страна создана. " + result;
         }
-
+        //изменить
         private void button_Change_Click(object sender, EventArgs e)
         {
             if (label_id.Text == "")
@@ -136,12 +141,13 @@ namespace RIS
             }
 
             Cursor.Current = Cursors.WaitCursor;
-
+            //получить параметры с формы
             string name = textBox_Name.Text;
             int country_id = Convert.ToInt32(label_id.Text);
-
+            //создать список параметров
             List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", country_id),
                                                                new Parameter("name", "text", name)};
+            //выполнить функцию
             string result = "";
             try
             {
@@ -160,9 +166,10 @@ namespace RIS
                 return;
             }
             Cursor.Current = Cursors.Default;
+            //результат
             toolStripStatusLabel.Text = "Страна изменена. " + result;
         }
-
+        //удалить
         private void button_Delete_Click(object sender, EventArgs e)
         {
             if (label_id.Text == "")
@@ -178,10 +185,11 @@ namespace RIS
             }
 
             Cursor.Current = Cursors.WaitCursor;
-
+            //параметр
             int country_id = Convert.ToInt32(label_id.Text);
-
+            //список параметров
             List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", country_id) };
+            //выполнить функцию
             string result = "";
             try
             {
@@ -200,9 +208,10 @@ namespace RIS
                 return;
             }
             Cursor.Current = Cursors.Default;
+            //результат
             toolStripStatusLabel.Text = "Страна удалена. " + result;
         }
-
+        //щелчок по гриду - получение координат выбранной ячейки и перенос данных в поля
         private void dataGridView_Countries_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.RowIndex != -1 && e.ColumnIndex != -1)
@@ -218,7 +227,7 @@ namespace RIS
                 }
             }
         }
-
+        //кнопка Обновить
         private void button_Refresh_Click(object sender, EventArgs e)
         {
             RefreshData();

@@ -11,11 +11,12 @@ using System.Diagnostics;
 
 namespace RIS
 {
+    //структура для элемента параметра
     public struct Parameter
     {
-        public string name;
-        public string type;
-        public object value;
+        public string name;//имя
+        public string type;//тип
+        public object value;//значение
         public Parameter(string name, string type, object value)
         {
             this.name = name;
@@ -23,11 +24,12 @@ namespace RIS
             this.value = value;
         }
     };
+    //структура для колонки таблицы
     public struct TableColumn
     {
-        public string name;
-        public string type;
-        public string title;
+        public string name;//имя
+        public string type;//тип
+        public string title;//отображаемое навание
         public TableColumn(string name, string type, string title)
         {
             this.name = name;
@@ -37,9 +39,11 @@ namespace RIS
     };
     class Class_Helper
     {
+        //связывание DataTable для DatagridView
         public static void SetColumns(DataTable table, DataGridView dataGridView, List <TableColumn> columns)
         {
-            dataGridView.DataSource = table;
+            dataGridView.DataSource = table;//связывание таблицы и грида
+            //создание колонок в таблице
             if (columns != null)
             {
                 foreach (var column in columns)
@@ -61,13 +65,16 @@ namespace RIS
                         default:
                             throw new Exception("Unknown parameter type");
                     }
+                    //задание отображаемых имен в гриде
                     dataGridView.Columns[column.name].HeaderCell.Value = column.title;
                 }
             }
         }
+        //связывание DataTable и ComboBox
         public static void SetMember(DataTable table, ComboBox comboBox, List<TableColumn> columns, string displayMember, string valueMember)
         {
-            comboBox.DataSource = table;
+            comboBox.DataSource = table;//связывание таблицы и комбобокса
+            //задание колонок в таблице
             if (columns != null)
             {
                 foreach (var column in columns)
@@ -90,10 +97,12 @@ namespace RIS
                             throw new Exception("Unknown parameter type");
                     }
                 }
+                //задание отображаемого и связанного значений в комбобоксе
                 comboBox.DisplayMember = displayMember;
                 comboBox.ValueMember = valueMember;
             }
         }
+        //выполнение хранимого запроса
         public static string ExecuteStoredQuery(NpgsqlConnection conn, string queryName, DataTable table, List <Parameter> parameters = null)
         {
             Stopwatch timer = new Stopwatch();
@@ -103,6 +112,7 @@ namespace RIS
             //////////////////////////////////
             NpgsqlCommand command = new NpgsqlCommand(queryName, conn);
             command.CommandType = System.Data.CommandType.StoredProcedure;
+            //заполнение параметров
             if (parameters != null)
             {
                 foreach (var param in parameters)
@@ -128,6 +138,7 @@ namespace RIS
             }
             NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(command);
             //////////////////////////////////
+            //открыть соединение
             try
             {
                 conn.Open();
@@ -137,6 +148,7 @@ namespace RIS
                 throw new Exception("Can't open a connection");
             }
             //////////////////////////////////
+            //выполнение запроса - данные записываются в таблицу
             try
             {
                 timer.Start();
@@ -150,9 +162,11 @@ namespace RIS
             }
             conn.Close();
             time = timer.ElapsedMilliseconds;
+            //возвратить строку результат
             result = Convert.ToString(table.Rows.Count) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
             return result;
         }
+        //выполнение хранимой функции
         public static string ExecuteFunction(NpgsqlConnection conn, string funcName, List<Parameter> parameters = null)
         {
             Stopwatch timer = new Stopwatch();
@@ -162,6 +176,7 @@ namespace RIS
             //////////////////////////////////
             NpgsqlCommand command = new NpgsqlCommand(funcName, conn);
             command.CommandType = System.Data.CommandType.StoredProcedure;
+            //заполнение параметров
             if (parameters != null)
             {
                 foreach (var param in parameters)
@@ -187,6 +202,7 @@ namespace RIS
             }
             NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(command);
             //////////////////////////////////
+            //открыть соединение
             try
             {
                 conn.Open();
@@ -196,6 +212,7 @@ namespace RIS
                 throw new Exception("Can't open a connection");
             }
             //////////////////////////////////
+            //запрос - выолнение функции
             try
             {
                 timer.Start();
@@ -211,26 +228,28 @@ namespace RIS
             conn.Close();
             time = timer.ElapsedMilliseconds;
             //result = Convert.ToString(rowsAffected) + " строк. Затрачено " + Convert.ToString(time) + " мсек.";
+            //вернуть строку результат
             result = "Затрачено " + Convert.ToString(time) + " мсек.";
             return result;
         }
-
+        //проверка является ли строка датой
         public static bool IsCorrect_Date(string dateStr)
         {
             DateTime date;
             return DateTime.TryParse(dateStr, out date);
         }
+        //проверка корректна ли строка (не пуста)
         public static bool IsCorrect_String(string str)
         {
             if (str == "")
                 return false;
             return true;
         }
+        //провека является ли строка дробным числом
         public static bool IsCorrect_Decimal(string decimStr)
         {
             Decimal decim;
             return Decimal.TryParse(decimStr, out decim);
         }
-
     }
 }

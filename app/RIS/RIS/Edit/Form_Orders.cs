@@ -14,14 +14,16 @@ namespace RIS
 {
     public partial class Form_Orders : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
+        //запросы на созданение, изменение, удаление
         private string funcCreate = "func_orders_on_insert";
         private string funcChange = "func_orders_on_update";
         private string funcDelete = "func_orders_on_delete";
-
-        private DataTable tableOrders;
+        //запрос на получение данных в зависимости от сервера        
         private string queryName = "get_orders_by_server";
+        //таблица и колонки для грида
+        private DataTable tableOrders;
         List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
                                                             new TableColumn("goods_id", "int", "goods_id"),
                                                             new TableColumn("goods", "text", "Товар"),
@@ -33,26 +35,31 @@ namespace RIS
                                                             new TableColumn("payment_method", "text", "Способ оплаты"),
                                                             new TableColumn("sale_type_id", "int", "sale_type_id"),
                                                             new TableColumn("sale_type", "text", "Вид продажи")};
-        private DataTable tableGoods;
+        //запрос на получение данных в зависимости от сервера  
         private string queryGoods = "get_list_goods_by_server";
+        //таблица и колонки для комбобокса
+        private DataTable tableGoods;
         List<TableColumn> membersGoods = new List<TableColumn> {new TableColumn("model", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-
-        private DataTable tableClients;
+        //запрос на получение всего списка
         private string queryClients = "get_list_clients";
+        //таблица и колонки для комбобокса
+        private DataTable tableClients;
         List<TableColumn> membersClients = new List<TableColumn> {new TableColumn("fullname", "text", "ФИО"),
                                                            new TableColumn("id", "int", "ИД")};
-
-        private DataTable tableSaleTypes;
+        //запрос на получение всего списка
         private string querySaleTypes = "get_all_sale_types";
+        //таблица и колонки для комбобокса
+        private DataTable tableSaleTypes;
         List<TableColumn> membersSaleTypes = new List<TableColumn> {new TableColumn("title", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-
-        private DataTable tablePaymentMethods;
+        //запрос на получение всего списка
         private string queryPaymentMethods = "get_all_payment_methods";
+        //таблица и колонки для комбобокса
+        private DataTable tablePaymentMethods;
         List<TableColumn> membersPaymentMethods = new List<TableColumn> {new TableColumn("title", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-
+        //создание формы
         public Form_Orders(string connStr)
         {
             InitializeComponent();
@@ -60,7 +67,7 @@ namespace RIS
 
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
-
+            //инициализация грида и комбобоксов
             this.tableOrders = new System.Data.DataTable();
             this.tableGoods = new System.Data.DataTable();
             this.tableClients = new System.Data.DataTable();
@@ -79,6 +86,7 @@ namespace RIS
             {
                 throw new Exception("Can't init datagrid/combobox: " + ex.Message);
             } 
+            //задать отображаемые колнки в гриде
             //dataGridView_Categories.Columns["id"].Visible = false;
             dataGridView_Orders.Columns["goods_id"].Visible = false;
             dataGridView_Orders.Columns["client_id"].Visible = false;
@@ -86,7 +94,7 @@ namespace RIS
             dataGridView_Orders.Columns["sale_type_id"].Visible = false;
 
         }
-
+        //получить список товаров
         private void GetGoods()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -106,7 +114,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //получить список клиентов
         private void GetClients()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -124,7 +132,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //получить список способов оплаты
         private void GetPaymentMethods()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -142,7 +150,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //получит список видов продаж
         private void GetSaleTypes()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -160,7 +168,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //Обновить отображаемые данные
         private void RefreshData()
         {
             string result = "";
@@ -181,7 +189,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //щелчок по гриду - получение координат выбранной ячейки и перенос данных в поля
         private void dataGridView_Orders_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.RowIndex != -1 && e.ColumnIndex != -1)
@@ -207,7 +215,7 @@ namespace RIS
                 }
             }
         }
-
+        //проверка введенных данных на корректность
         private bool IsEveryFieldCorrect()
         {
             string on_sale_date_str = textBox_On_sale_date.Text;
@@ -395,7 +403,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = "Заказ удален. " + result;
         }
-
+        //кнопка ОБновить
         private void button_Refresh_Click(object sender, EventArgs e)
         {
             GetGoods();
@@ -404,12 +412,16 @@ namespace RIS
             GetSaleTypes();
             RefreshData();
         }
-
+        //перед первым показом формы
         private void Form_Orders_Shown(object sender, EventArgs e)
         {
+            //получить список товаров
             GetGoods();
+            //получить список клиентов
             GetClients();
+            //получить список способов оплаты
             GetPaymentMethods();
+            //получить список типов продаж
             GetSaleTypes();
         }
 

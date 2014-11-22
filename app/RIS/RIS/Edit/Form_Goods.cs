@@ -14,14 +14,16 @@ namespace RIS
 {
     public partial class Form_Goods : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
+        //запросы на созданение, изменение, удаление
         private string funcCreate = "func_goods_on_insert";
         private string funcChange = "func_goods_on_update";
         private string funcDelete = "func_goods_on_delete";
-
-        private DataTable tableGoods;
+        //запрос на получение данных в зависимости от сервера        
         private string queryName = "get_goods_by_server";
+        //таблица и колонки для грида
+        private DataTable tableGoods;
         List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
                                                             new TableColumn("category_id", "int", "category_id"),
                                                             new TableColumn("category", "text", "Категория"),
@@ -29,16 +31,19 @@ namespace RIS
                                                             new TableColumn("company", "text", "Компания"),
                                                             new TableColumn("model", "text", "Модель товара"),
                                                             new TableColumn("price", "num", "Цена")};
-        private DataTable tableCategories;
+        //запрос на получение всего списка
         private string queryCategories = "get_all_categories";
+        //таблица и колонки для комбобокса
+        private DataTable tableCategories;
         List<TableColumn> membersCategories = new List<TableColumn> {new TableColumn("title", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-
-        private DataTable tableCompanies;
+        //запрос на получение данных в зависимости от сервера
         private string queryCompanies = "get_list_companies_by_server";
+        //таблица и колонки для комбобокса
+        private DataTable tableCompanies;
         List<TableColumn> membersCompanies = new List<TableColumn> {new TableColumn("name", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-
+        //создание формы
         public Form_Goods(string connStr)
         {
             InitializeComponent();
@@ -46,7 +51,7 @@ namespace RIS
 
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
-
+            //инициализация грида и комбобоксов
             this.tableGoods = new System.Data.DataTable();
             this.tableCategories = new System.Data.DataTable();
             this.tableCompanies = new System.Data.DataTable();
@@ -60,13 +65,13 @@ namespace RIS
             catch (Exception ex)
             {
                 throw new Exception("Can't init datagrid/combobox: " + ex.Message);
-            } 
-
+            }
+            //задать отображаемые колнки в гриде
             //dataGridView_Categories.Columns["id"].Visible = false;
             dataGridView_Goods.Columns["category_id"].Visible = false;
             dataGridView_Goods.Columns["company_id"].Visible = false;
         }
-
+        //получить список категорий
         private void GetCategories()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -84,7 +89,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //получить список компаний
         private void GetCompanies()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -104,7 +109,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //Обновить отображаемые данные
         private void RefreshData()
         {
             string result = "";
@@ -125,7 +130,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //щелчок по гриду - получение координат выбранной ячейки и перенос данных в поля
         private void dataGridView_Goods_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.RowIndex != -1 && e.ColumnIndex != -1)
@@ -148,7 +153,7 @@ namespace RIS
                 }
             }
         }
-
+        //проверка введенных данных на корректность
         private bool IsEveryFieldCorrect()
         {
             string model = textBox_Model.Text;
@@ -318,17 +323,19 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = "Товар удален. " + result;
         }
-
+        //кнопка Обновить
         private void button_Refresh_Click(object sender, EventArgs e)
         {
             GetCategories();
             GetCompanies();
             RefreshData();
         }
-
+        //перед первым показом формы
         private void Form_Goods_Shown(object sender, EventArgs e)
         {
+            //получить список категорий
             GetCategories();
+            //получить список компаний
             GetCompanies();
         }
     }

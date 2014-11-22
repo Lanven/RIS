@@ -16,14 +16,16 @@ namespace RIS
 {
     public partial class Form_Query_Excel : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
-        private System.Data.DataTable tableFirms;
-        private string queryFirms = "query91";
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
+        private System.Data.DataTable tableFirms;//таблица для комбобокса "Список фирм"
+        private string queryFirms = "query91";//запрос для получения списка фирм
+        //колонки в таблице
         List<TableColumn> members = new List<TableColumn> {new TableColumn("name", "text", "Название"),
                                                            new TableColumn("id", "int", "ИД")};
-        private System.Data.DataTable tableData;
-        private string queryData = "query92";
+        private System.Data.DataTable tableData;//таблица для грида "Данные о фирме"
+        private string queryData = "query92";//запрос для получения данных
+        //колонки в таблице
         List<TableColumn> columns = new List<TableColumn> {new TableColumn("surnam", "text", "Фамилия"),
                                                            new TableColumn("nam", "text", "Имя"),
                                                            new TableColumn("patronymi", "text", "Отчество"),
@@ -31,14 +33,16 @@ namespace RIS
                                                            new TableColumn("passport_serie", "text", "Серия паспорта"),
                                                            new TableColumn("passport_numbe", "text", "Номер паспорта"),
                                                            new TableColumn("summ", "num", "Сумма")};
+       //Инициализация формы
         public Form_Query_Excel(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+
+            //инициализация комбобокса и грида
             this.tableFirms = new System.Data.DataTable();
             this.tableData = new System.Data.DataTable();
-
             try
             {
                 Class_Helper.SetColumns(tableData, dataGridView_Data, columns);
@@ -49,7 +53,7 @@ namespace RIS
                 throw new Exception("Can't init datagrid/combobox: " + ex.Message);
             }        
         }
-
+        //получение списка фирм
         private void getFirmList()
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -67,12 +71,12 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //нажатие Фирмы для получения списка фирм
         private void button_GetFirmList_Click(object sender, EventArgs e)
         {
             getFirmList();
         }
-
+        //является ли строка записью даты
         private bool IsDate(string str)
         {
             DateTime myDate;
@@ -80,23 +84,24 @@ namespace RIS
                 return true;
             return false;
         }
-
+        //получить данные о выбранной фирме
         private void button_GetLook_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
+            //ид фирмы из списка
             if (comboBox_Firms.SelectedIndex == -1)
             {
-                MessageBox.Show("Choose firm");
+                MessageBox.Show("Выберите фирму");
                 return;
             }
-
             int firmID = Convert.ToInt32(comboBox_Firms.SelectedValue);
+            //введенные даты и проверка
             string fromStr = maskedTextBox_From.Text;
             string toStr = maskedTextBox_To.Text;
 
             if (!IsDate(fromStr) || !IsDate(toStr))
             {
-                MessageBox.Show("Incorrect dates");
+                MessageBox.Show("Неверные даты");
                 return;
             }
             DateTime from = DateTime.Parse(fromStr);
@@ -106,6 +111,7 @@ namespace RIS
             label6.Text = toStr;
             label7.Text = ((System.Data.DataRowView)comboBox_Firms.SelectedItem).Row["name"].ToString();
             /**************************************/
+            //запрос для получения данных
             List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", firmID),
                                                                 new Parameter("from", "date", from),
                                                                 new Parameter("to", "date", to)};
@@ -123,7 +129,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //Вывести данные в отчет Excel
         private void button_GetExcelReport_Click(object sender, EventArgs e)
         {
             string from = label5.Text;
@@ -135,6 +141,7 @@ namespace RIS
                 MessageBox.Show("Пожалуйста, введите данные и нажмите просмотр");
                 return;
             }
+            //создание документа
             Microsoft.Office.Interop.Excel.Application excelApp;
             excelApp = new Microsoft.Office.Interop.Excel.Application();
 
@@ -142,21 +149,21 @@ namespace RIS
             Worksheet excelWorkSheet;
             excelWorkBook = excelApp.Workbooks.Add();
             excelWorkSheet = (Worksheet)excelWorkBook.Worksheets[1];
-
+            //сосавление заголовка
             excelApp.Cells[1, 1] = "Фирма:";
-            excelWorkSheet.Cells[1, 1].Font.Bold = true;
-            excelWorkSheet.Range["B1:G1"].Merge();
+            excelWorkSheet.Cells[1, 1].Font.Bold = true;//жирный шрифт
+            excelWorkSheet.Range["B1:G1"].Merge();//объеденить ячейки
             excelApp.Cells[1, 2] = name;
-            excelWorkSheet.Cells[1, 2].Style.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+            excelWorkSheet.Cells[1, 2].Style.HorizontalAlignment = XlHAlign.xlHAlignCenter;//выравнивание по центру
             excelWorkSheet.Cells[1, 2].Font.Bold = true;
-            excelWorkSheet.Cells[1, 2].Font.Size = 16;
+            excelWorkSheet.Cells[1, 2].Font.Size = 16;//размер шрифта
 
             excelApp.Cells[2, 1] = "Период:";
             excelWorkSheet.Cells[2, 1].Font.Bold = true;
             excelApp.Cells[2, 2] = from;
             excelApp.Cells[2, 3] = to;
             
-
+            //создание таблицы с данными
             int num = 4;
             for (int i = 0; i < dataGridView_Data.ColumnCount; i++)
             {
@@ -172,11 +179,12 @@ namespace RIS
                     excelApp.Cells[num + i, j + 1] = dataGridView_Data.Rows[i].Cells[j].Value;
                 }
             }
-
+            //обводка полученной таблицы
+            //выравнивание ширины
             excelWorkSheet.Range["A4:G" + Convert.ToString(dataGridView_Data.Rows.Count + num - 1)].Borders.LineStyle = XlLineStyle.xlContinuous;
-            excelApp.Columns.AutoFit();
-            excelApp.Visible = true;
-            
+            excelWorkSheet.Range["A4:G" + Convert.ToString(dataGridView_Data.Rows.Count + num - 1)].Columns.AutoFit();
+            //excelApp.Columns.AutoFit();
+            excelApp.Visible = true;//показать юзеру полученный документ
         }
     }
 }

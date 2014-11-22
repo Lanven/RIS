@@ -14,13 +14,16 @@ namespace RIS
 {
     public partial class Form_Clients : Form
     {
-        private string connStr;
-        private NpgsqlConnection conn;
-        private DataTable table;
+        private string connStr;//строка подключения
+        private NpgsqlConnection conn;//подключение
+        //запрос на получение всего списка
         private string queryName = "get_all_clients";
+        //запросы на созданение, изменение, удаление
         private string funcCreate = "func_clients_on_insert";
         private string funcChange = "func_clients_on_update";
         private string funcDelete = "func_clients_on_delete";
+        //таблица и колонки для грида
+        private DataTable table;
         List<TableColumn> columns = new List<TableColumn> {new TableColumn("id", "int", "id"),
                                                             new TableColumn("surname", "text", "Фамилия"),
                                                             new TableColumn("name", "text", "Имя"),
@@ -33,15 +36,14 @@ namespace RIS
                                                             new TableColumn("passport_number", "text", "Номер паспорта"),
                                                             new TableColumn("issue_date", "date", "Дата выдачи паспорта"),
                                                             new TableColumn("issue_department", "text", "Код подразделения, выдавшего паспорт")};
-
-
+        //создание формы
         public Form_Clients(string connStr)
         {
             InitializeComponent();
             this.connStr = connStr;
             this.conn = new NpgsqlConnection(connStr);
+            //инициализация грида
             this.table = new DataTable();
-
             try
             {
                 Class_Helper.SetColumns(table, dataGridView_Clients, columns);
@@ -53,7 +55,7 @@ namespace RIS
 
             //dataGridView_Categories.Columns["id"].Visible = false;
         }
-
+        //Обновить отображаемые данные
         private void RefreshData()
         {
             string result = "";
@@ -71,7 +73,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = result;
         }
-
+        //щелчок по гриду - получение координат выбранной ячейки и перенос данных в поля
         private void dataGridView_Clients_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.RowIndex != -1 && e.ColumnIndex != -1)
@@ -98,7 +100,7 @@ namespace RIS
                 }
             }
         }
-
+        //проверка введенных данных на корректность
         private bool IsEveryFieldCorrect()
         {
             string surname = textBox_Surname.Text;
@@ -156,7 +158,7 @@ namespace RIS
             
             return true;
         }
-
+        //создать
         private void button_Create_Click(object sender, EventArgs e)
         {
             if (!IsEveryFieldCorrect())
@@ -165,7 +167,7 @@ namespace RIS
             }
 
             Cursor.Current = Cursors.WaitCursor;
-
+            //получить параметры с формы
             string surname = textBox_Surname.Text;
             string name = textBox_Name.Text;
             string patronymic = textBox_Patronymic.Text;
@@ -183,7 +185,7 @@ namespace RIS
 
             string birthdate_str = textBox_Birthdate.Text;
             DateTime birthdate = DateTime.Parse(birthdate_str);
-            
+            //задать список параметров
             List<Parameter> parameters = new List<Parameter> { new Parameter("surname", "text", surname),
                                                                 new Parameter("name", "text", name),
                                                                 new Parameter("patronymic", "text", patronymic),
@@ -195,7 +197,7 @@ namespace RIS
                                                                 new Parameter("passport_number", "text", passport_number),
                                                                 new Parameter("issue_date", "date", issue_date),
                                                                 new Parameter("issue_department", "text", issue_department)};
-
+            //выполнить функцию
             string result = "";
             try
             {
@@ -216,7 +218,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = "Клиент создан. " + result;
         }
-
+        //изменить
         private void button_Change_Click(object sender, EventArgs e)
         {
             if (label_id.Text == "")
@@ -229,7 +231,7 @@ namespace RIS
                 return;
             }
             Cursor.Current = Cursors.WaitCursor;
-
+            //получить параметры с формы
             string surname = textBox_Surname.Text;
             string name = textBox_Name.Text;
             string patronymic = textBox_Patronymic.Text;
@@ -249,7 +251,7 @@ namespace RIS
             DateTime birthdate = DateTime.Parse(birthdate_str);
 
             int client_id = Convert.ToInt32(label_id.Text);
-
+            //задать список параметров
             List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", client_id),
                                                                 new Parameter("surname", "text", surname),
                                                                 new Parameter("name", "text", name),
@@ -262,7 +264,7 @@ namespace RIS
                                                                 new Parameter("passport_number", "text", passport_number),
                                                                 new Parameter("issue_date", "date", issue_date),
                                                                 new Parameter("issue_department", "text", issue_department)};
-
+            //выполнить функцию
             string result = "";
             try
             {
@@ -283,7 +285,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = "Клиент изменен. " + result;
         }
-
+        //удалить
         private void button_Delete_Click(object sender, EventArgs e)
         {
             if (label_id.Text == "")
@@ -300,10 +302,11 @@ namespace RIS
             }
 
             Cursor.Current = Cursors.WaitCursor;
-
+            //параметр с формы
             int client_id = Convert.ToInt32(label_id.Text);
-
+            //в список параметров
             List<Parameter> parameters = new List<Parameter> { new Parameter("id", "int", client_id) };
+            //выполнить функцию
             string result = "";
             try
             {
@@ -324,7 +327,7 @@ namespace RIS
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel.Text = "Клиент удален. " + result;
         }
-
+        //кнопка Обновить
         private void button_Refresh_Click(object sender, EventArgs e)
         {
             RefreshData();
